@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html dir="ltr" lang="en" style="height: auto;">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <link rel="icon" type="image/png" sizes="16x16" href="assets/images/favicon.png">
+    <title>Pretty Screentime</title>
+    <link href="dist/css/style.min.css" rel="stylesheet">
+
+
+
+</head>
+<body> 
+<div class="card">
+    <div class="card-body" style="width: 300px">
+
+        <div class="chat-img d-inline" style="margin-bottom: 5px;"><img src="icons48.png"
+            alt="user" class="rounded-square" width="25">
+    </div><h4 class="card-title d-inline " style="text-align: center;">PRETTY SCREENTIME</h4>
+        <ul class="nav nav-tabs mt-2 mb-3" style="width: 100%;">
+            <li class="nav-item" style="width: 33.33%;">
+                <a href="#home" data-toggle="tab" class="nav-link" style="font-size: smaller; text-align: center;">
+                     Week
+                </a>
+            </li>
+            <li class="nav-item" style="width: 33.33%;">
+                <a href="#profile" data-toggle="tab" aria-expanded="true" class="nav-link active" style="font-size: smaller; text-align: center;">
+                    Today
+                </a>
+            </li>
+            <li class="nav-item" style="width: 33.33%;">
+                <a href="#settings" data-toggle="tab" aria-expanded="false" class="nav-link" style="font-size: smaller; text-align: center;">
+              Select
+                </a>
+            </li>
+
+        </ul>
+
+        <div class="tab-content" style="width: 100%;">
+            <div class="tab-pane" id="home">
+                <ul class="list-group" id="weekly" >
+
+
+                </ul>
+            </div>
+
+            <div class="tab-pane show active" id="profile">
+                <ul class="list-group" id="daily">
+                            <!-- <li style="list-style-type:none">
+                            <div style="display: flex;">
+                                <div class="chat-img ml-1 mb-1"><img src="assets/images/icons/youtube.png"
+                                        alt="user" class="rounded-square" width="25">
+                                </div>
+                                <div class="chat-content d-inline-block pl-3 pt-2" style="flex-grow: 1;">
+                                    <h6 class="font-weight-medium">YouTube</h6>
+
+                                </div>
+                                <div class="chat-time d-inline-block font-10 pt-2"> 1h 43mn</div>
+                            </div>
+
+                            <div class="progress mb-3">
+                                <div class="progress-bar" role="progressbar" style="width: 30%" aria-valuenow="100"
+                                    aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+
+                        </li> 
+                                            <li style="list-style-type:none">
+                            <div style="display: flex;">
+                                <div class="chat-img ml-1 mb-1"><img src="assets/images/icons/netflix.png"
+                                        alt="user" class="rounded-square" width="25">
+                                </div>
+                                <div class="chat-content d-inline-block pl-3 pt-2" style="flex-grow: 1;">
+                                    <h6 class="font-weight-medium">Netflix</h6>
+
+                                </div>
+                                <div class="chat-time d-inline-block font-10 pt-2">43mn</div>
+                            </div>
+
+                            <div class="progress mb-3">
+                                <div class="progress-bar" role="progressbar" style="width: 10%" aria-valuenow="100"
+                                    aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+
+                        </li> -->
+
+
+                </ul>
+            </div>
+            <!-- <div class="tab-pane show active" id="settings"> -->
+            <div class="tab-pane mb-0" id="settings">
+                <ul class="list-group" id="select">
+                    <li class="list-group-item list-group-item-default">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="netflixCheck">
+                            <label class="custom-control-label" for="netflixCheck"><span> <img
+                                        src="assets/images/icons/netflix.png" alt="user" class="rounded-square"
+                                        width="25"> </span>Netflix</label>
+                        </div>
+
+                    </li>
+                    <li class="list-group-item list-group-item-default">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="youtubeCheck"
+                                onclick="checkStatus('youtube')">
+                            <label class="custom-control-label" for="youtubeCheck"><span> <img
+                                        src="assets/images/icons/youtube.png" alt="user" class="rounded-square"
+                                        width="25"> </span>YouTube</label>
+
+                        </div>
+                    </li>
+
+                    <li class="list-group-item list-group-item-default">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="twitterCheck"
+                                onclick="checkStatus('twitter')">
+                            <label class="custom-control-label" for="twitterCheck"><span> <img
+                                        src="assets/images/icons/twitter.png" alt="user" class="rounded-square"
+                                        width="25"> </span>Twitter</label>
+                        </div>
+
+                    </li>
+                    <li class="list-group-item list-group-item-default">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="facebookCheck"
+                                onclick="checkStatus('facebook')">
+                            <label class="custom-control-label" for="facebookCheck"><span> <img
+                                        src="assets/images/icons/facebook.png" alt="user" class="rounded-square"
+                                        width="25"> </span>Facebook</label>
+                        </div>
+                    </li>
+                    <li class="list-group-item list-group-item-default">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="instagramCheck"
+                                onclick="checkStatus('instagram')">
+                            <label class="custom-control-label" for="instagramCheck">
+                                <span> <img src="assets/images/icons/instagram.png" alt="user" class="rounded-square"
+                                        width="25"> </span>Instagram
+                            </label>
+                        </div>
+                    </li>
+                    <li class="list-group-item list-group-item-default">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="pinterestCheck"
+                                onclick="checkStatus('pinterest')">
+                            <label class="custom-control-label" for="pinterestCheck"><span> <img
+                                        src="assets/images/icons/pinterest.png" alt="user" class="rounded-square"
+                                        width="25"> </span>Pinterest</label>
+                        </div>
+                    </li>
+                    <li class="list-group-item list-group-item-default">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="redditCheck"
+                                onclick="checkStatus('reddit')">
+                            <label class="custom-control-label" for="redditCheck"><span> <img
+                                        src="assets/images/icons/reddit.png" alt="user" class="rounded-square"
+                                        width="25"> </span>Reddit</label>
+                        </div>
+                    </li>
+                    <li class="list-group-item list-group-item-default">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="quoraCheck"
+                                onclick="checkStatus('quora')">
+                            <label class="custom-control-label" for="quoraCheck"><span> <img
+                                        src="assets/images/icons/quora.png" alt="user" class="rounded-square"
+                                        width="25"> </span>Quora</label>
+                        </div>
+                    </li>
+
+
+                    <li class="list-group-item list-group-item-default">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="amazonCheck"
+                                onclick="checkStatus('amazon')">
+                            <label class="custom-control-label" for="amazonCheck"><span> <img
+                                        src="assets/images/icons/amazon.png" alt="user" class="rounded-square"
+                                        width="25"> </span>Amazon</label>
+                        </div>
+                    </li>
+
+                    <li class="list-group-item list-group-item-default">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="spotifyCheck"
+                                onclick="checkStatus('spotify')">
+                            <label class="custom-control-label" for="spotifyCheck"><span> <img
+                                        src="assets/images/icons/spotify.png" alt="user" class="rounded-square"
+                                        width="25"> </span>Spotify</label>
+                        </div>
+                    </li>
+
+                    <li class="list-group-item list-group-item-default">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="mediumCheck"
+                                onclick="checkStatus('medium')">
+                            <label class="custom-control-label mt-2" for="mediumCheck"><span> <img
+                                        src="assets/images/icons/medium.png" alt="user" class="rounded-square"
+                                        width="25"> </span>Medium</label>
+                        </div>
+                    </li>
+                    <li class="list-group-item list-group-item-default">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="linkedinCheck"
+                                onclick="checkStatus('linkedin')">
+                            <label class="custom-control-label" for="linkedinCheck"><span> <img
+                                        src="assets/images/icons/linkedin.png" alt="user" class="rounded-square"
+                                        width="25"> </span>LinkedIn</label>
+                        </div>
+                    </li>
+
+                    <li class="list-group-item list-group-item-default">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="slackCheck"
+                                onclick="checkStatus('slack')">
+                            <label class="custom-control-label" for="slackCheck"><span> <img
+                                        src="assets/images/icons/slack.png" alt="user" class="rounded-square"
+                                        width="25"> </span>Slack</label>
+                        </div>
+                    </li>
+
+                    <li class="list-group-item list-group-item-default">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="tumblrCheck"
+                                onclick="checkStatus('tumblr')">
+                            <label class="custom-control-label" for="tumblrCheck"><span> <img
+                                        src="assets/images/icons/tumblr.png" alt="user" class="rounded-square"
+                                        width="25"> </span>Tumblr</label>
+                        </div>
+                    </li>
+
+
+                    <li class="list-group-item list-group-item-default">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="twitchCheck"
+                                onclick="checkStatus('twitch')">
+                            <label class="custom-control-label" for="twitchCheck"><span> <img
+                                        src="assets/images/icons/twitch.png" alt="user" class="rounded-square"
+                                        width="25"> </span>Twitch</label>
+                        </div>
+                    </li>
+
+                    <li class="list-group-item list-group-item-default">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="discordCheck"
+                                onclick="checkStatus('discord')">
+                            <label class="custom-control-label" for="discordCheck"><span> <img
+                                        src="assets/images/icons/discord.png" alt="user" class="rounded-square"
+                                        width="25"> </span>Discord</label>
+                        </div>
+                    </li>
+
+                    <li class="list-group-item list-group-item-default">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="stackCheck"
+                                onclick="checkStatus('stack')">
+                            <label class="custom-control-label" for="stackCheck"><span> <img
+                                        src="assets/images/icons/stack.png" alt="user" class="rounded-square"
+                                        width="25"> </span>Stack Overflow</label>
+                        </div>
+                    </li>
+                    <li class="list-group-item list-group-item-default">
+                        <div class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="leetcodeCheck"
+                                onclick="checkStatus('leetcode')">
+                            <label class="custom-control-label" for="leetcodeCheck"><span> <img
+                                        src="assets/images/icons/leetcode.png" alt="user" class="rounded-square"
+                                        width="25"> </span>LeetCode</label>
+                        </div>
+                    </li>
+
+
+                </ul>
+
+            </div>
+
+
+
+        </div>
+
+    </div> <!-- end card-body-->
+</div> <!-- end card-->
+<script type="text/javascript" src="jquery-3.5.1.js"></script>
+<script type="text/javascript" src="append.js"></script>
+
+
+
+</body>
+
+<!-- All Jquery -->
+<!-- ============================================================== -->
+<script src="assets/libs/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap tether Core JavaScript -->
+<script src="assets/libs/popper.js/dist/umd/popper.min.js"></script>
+<script src="assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- apps -->
+<!-- apps -->
+<script src="dist/js/app-style-switcher.js"></script>
+<script src="dist/js/feather.min.js"></script>
+<!-- slimscrollbar scrollbar JavaScript -->
+<script src="assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
+<script src="assets/extra-libs/sparkline/sparkline.js"></script>
+<!--Wave Effects -->
+<!-- themejs -->
+<!--Menu sidebar -->
+<script src="dist/js/sidebarmenu.js"></script>
+<!--Custom JavaScript -->
+<script src="dist/js/custom.min.js"></script>
+<!-- This Page JS -->
+<script src="assets/extra-libs/prism/prism.js"></script>
+
+</html>
