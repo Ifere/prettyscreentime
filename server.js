@@ -3,7 +3,7 @@ store appdata as {"prettyscreen time": {dates}}
 store dates as {"date": {apptime}}
 store apptime as {"app": time}
 */
-console.log("welcome to server")
+console.log("pretty screentime is working...")
 
 let url = ""
 let regNetflix = /netflix/ig
@@ -117,8 +117,16 @@ function update() {
 
 
 
+let toMonitor = {}
 
+chrome.storage.sync.get(['checkPersist'], (result) => {
+    check = result['checkPersist']
+    if (result['checkPersist']) {
+        toMonitor = result['checkPersist'];
 
+    }
+
+})
 
 chrome.storage.sync.get(['prettyScreenTime'], function (result) {
     if (result["prettyScreenTime"]) {
@@ -134,21 +142,24 @@ chrome.storage.sync.get(['prettyScreenTime'], function (result) {
         }
 
     }
+    if (toMonitor && toMonitor[url] == true) {
+        console.log(dateData)
+        let timing = setInterval(update, 60000)
 
-    let timing = setInterval(update, 60000)
 
+        document.addEventListener('visibilitychange', function () {
+    
+            if (document.hidden) {
+                clearInterval(timing)
+            }
+    
+            else {
+                timing = setInterval(update, 60000)
+            }
+        })
 
-    document.addEventListener('visibilitychange', function () {
-        let dater = new Date()
+    }
 
-        if (document.hidden) {
-            clearInterval(timing)
-        }
-
-        else {
-            timing = setInterval(update, 60000)
-        }
-    })
 })
 
 
