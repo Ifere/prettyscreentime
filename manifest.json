@@ -2,7 +2,7 @@
     "manifest_version": 2, 
     "name": "Pretty Screentime",
     "description": "Reports Screen Time data of your favourite websites",
-    "version": "1.0.0",
+    "version": "1.1.0",
     
 
     "content_scripts": [{

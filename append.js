@@ -77,6 +77,7 @@ window.onload = function () {
     }
 
 
+    
     let recentTimeWeek = function (app, callback) {
         let d = new Date
         let dayDigit = d.getUTCDay()

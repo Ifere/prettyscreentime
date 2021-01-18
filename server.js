@@ -3,102 +3,135 @@ store appdata as {"prettyscreen time": {dates}}
 store dates as {"date": {apptime}}
 store apptime as {"app": time}
 */
-console.log("pretty screentime is working...")
 
-let url = ""
-let regNetflix = /netflix/ig
-let regYoutube = /youtube/ig
-let regQuora = /quora/ig
-let regPinterest = /pinterest/ig
-let regLeetcode = /leetcode/ig
-let regTwitter = /twitter/ig
-let regFacebook = /facebook/ig
-let regAmazon = /amazon/ig
-let regReddit = /reddit/ig
-let regSpotify = /spotify/ig
-let regInstagram = /instagram/ig
-let regMedium = /medium/ig
-let regSlack = /slack/ig
-let regTumblr = /tumblr/ig
-let regLinkedin = /linkedin/ig
-let regDiscord = /discord/ig
-let regStack = /stackoverflow/ig
-let regTwitch = /twitch/ig
+console.log("Pretty Screentime is working...")
 
 
 
 
-if (regNetflix.test(window.location.href)) {
-    url = 'netflix'
+function checkCurrentTabUrl() {
+
+    const regNetflix = /netflix/ig
+    const regYoutube = /youtube/ig
+    const regQuora = /quora/ig
+    const regPinterest = /pinterest/ig
+    const regLeetcode = /leetcode/ig
+    const regTwitter = /twitter/ig
+    const regFacebook = /facebook/ig
+    const regAmazon = /amazon/ig
+    const regReddit = /reddit/ig
+    const regSpotify = /spotify/ig
+    const regInstagram = /instagram/ig
+    const regMedium = /medium/ig
+    const regSlack = /slack/ig
+    const regTumblr = /tumblr/ig
+    const regLinkedin = /linkedin/ig
+    const regDiscord = /discord/ig
+    const regStack = /stackoverflow/ig
+    const regTwitch = /twitch/ig
+
+    const regExStore = [
+        regNetflix, regYoutube, regQuora,
+        regPinterest, regLeetcode, regTwitter,
+        regFacebook, regAmazon, regReddit,
+        regSpotify, regInstagram, regMedium,
+        regSlack, regTumblr, regLinkedin,
+        regDiscord, regStack, regTwitch
+    ]
+
+    const regExUrlMatcher = [
+        'netflix', 'youtube', "quora",
+        "pinterest", "leetcode", "twitter",
+        "facebook", "amazon", "reddit",
+        "spotify", "instagram", "medium",
+        "slack", "tumblr", "linkedin",
+        "discord", "stackoverflow", "twitch"
+    ]
+
+    for (i = 0; i < regExStore.length; i++) {
+        searchFlag = regExStore[i].test(window.location.href)
+        if (searchFlag) {
+            return regExUrlMatcher[i]
+        }
+    }
 }
 
-if (regYoutube.test(window.location.href)) {
-    url = 'youtube'
-}
 
-if (regQuora.test(window.location.href)) {
-    url = 'quora'
-}
 
-if (regPinterest.test(window.location.href)) {
-    url = 'pinterest'
-}
+// if (regNetflix.test(window.location.href)) {
+//     url = 'netflix'
+// }
 
-if (regLeetcode.test(window.location.href)) {
-    url = 'leetcode'
-}
+// if (regYoutube.test(window.location.href)) {
+//     url = 'youtube'
+// }
 
-if (regTwitter.test(window.location.href)) {
-    url = 'twitter'
-}
+// if (regQuora.test(window.location.href)) {
+//     url = 'quora'
+// }
 
-if (regFacebook.test(window.location.href)) {
-    url = 'facebook'
-}
+// if (regPinterest.test(window.location.href)) {
+//     url = 'pinterest'
+// }
 
-if (regAmazon.test(window.location.href)) {
-    url = 'amazon'
-}
+// if (regLeetcode.test(window.location.href)) {
+//     url = 'leetcode'
+// }
 
-if (regReddit.test(window.location.href)) {
-    url = 'reddit'
-}
+// if (regTwitter.test(window.location.href)) {
+//     url = 'twitter'
+// }
 
-if (regSpotify.test(window.location.href)) {
-    url = 'spotify'
-}
+// if (regFacebook.test(window.location.href)) {
+//     url = 'facebook'
+// }
 
-if (regInstagram.test(window.location.href)) {
-    url = 'instagram'
-}
+// if (regAmazon.test(window.location.href)) {
+//     url = 'amazon'
+// }
 
-if (regMedium.test(window.location.href)) {
-    url = 'medium'
-}
+// if (regReddit.test(window.location.href)) {
+//     url = 'reddit'
+// }
 
-if (regSlack.test(window.location.href)) {
-    url = 'slack'
-}
+// if (regSpotify.test(window.location.href)) {
+//     url = 'spotify'
+// }
 
-if (regTumblr.test(window.location.href)) {
-    url = 'tumblr'
+// if (regInstagram.test(window.location.href)) {
+//     url = 'instagram'
+// }
 
-}
-if (regLinkedin.test(window.location.href)) {
-    url = 'linkedin'
-}
+// if (regMedium.test(window.location.href)) {
+//     url = 'medium'
+// }
 
-if (regDiscord.test(window.location.href)) {
-    url = 'discord'
-}
+// if (regSlack.test(window.location.href)) {
+//     url = 'slack'
+// }
 
-if (regStack.test(window.location.href)) {
-    url = 'stackoverflow'
-}
+// if (regTumblr.test(window.location.href)) {
+//     url = 'tumblr'
 
-if (regTwitch.test(window.location.href)) {
-    url = 'twitch'
-}
+// }
+// if (regLinkedin.test(window.location.href)) {
+//     url = 'linkedin'
+// }
+
+// if (regDiscord.test(window.location.href)) {
+//     url = 'discord'
+// }
+
+// if (regStack.test(window.location.href)) {
+//     url = 'stackoverflow'
+// }
+
+// if (regTwitch.test(window.location.href)) {
+//     url = 'twitch'
+// }
+
+
+let url = checkCurrentTabUrl()
 
 
 // dater = new Date()
@@ -112,7 +145,7 @@ dateData[date] = {}
 
 function update() {
     dateData[date][url] += 1
-    chrome.storage.sync.set({ "prettyScreenTime": dateData });    
+    chrome.storage.sync.set({ "prettyScreenTime": dateData });
 }
 
 
@@ -143,16 +176,15 @@ chrome.storage.sync.get(['prettyScreenTime'], function (result) {
 
     }
     if (toMonitor && toMonitor[url] == true) {
-        console.log(dateData)
         let timing = setInterval(update, 60000)
 
 
         document.addEventListener('visibilitychange', function () {
-    
+
             if (document.hidden) {
                 clearInterval(timing)
             }
-    
+
             else {
                 timing = setInterval(update, 60000)
             }
