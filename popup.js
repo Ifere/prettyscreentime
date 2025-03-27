@@ -1,6 +1,62 @@
 document.addEventListener('DOMContentLoaded', function() {
-    console.log("Pretty Frontend is working ...")
-    let currentActiveTab = "Day";  // Default to Day tab
+    console.log("Pretty Frontend is working ...");
+    
+    // 1. First, log all tab elements to see what's available
+    const tabElements = document.getElementsByClassName("tabcontent");
+    console.log("Tab elements:", tabElements);
+    
+    // 2. Force the first tab to be visible, regardless of ID
+    if (tabElements.length > 0) {
+        tabElements[0].style.display = "block";
+        console.log("Made first tab visible:", tabElements[0].id);
+    }
+    
+    // 3. Add a welcome message directly to the body if it's a first-time user
+    chrome.storage.local.get("firstTimeUser", function(data) {
+        const isFirstTimeUser = data.firstTimeUser === undefined ? true : data.firstTimeUser;
+        
+        if (isFirstTimeUser) {
+            // Create welcome message
+            const welcomeDiv = document.createElement("div");
+            welcomeDiv.style.position = "absolute";
+            welcomeDiv.style.top = "60px";
+            welcomeDiv.style.left = "10px";
+            welcomeDiv.style.right = "10px";
+            welcomeDiv.style.zIndex = "1000";
+            welcomeDiv.style.textAlign = "center";
+            welcomeDiv.style.padding = "15px";
+            welcomeDiv.style.backgroundColor = "#4CAF50";
+            welcomeDiv.style.color = "white";
+            welcomeDiv.style.borderRadius = "5px";
+            
+            welcomeDiv.textContent = "Welcome to Pretty Screentime! Please select apps to monitor.";
+            
+            // Add to document body
+            document.body.appendChild(welcomeDiv);
+            
+            // Save that user has seen welcome
+            chrome.storage.local.set({ "firstTimeUser": false });
+            
+            console.log("Added welcome message to body");
+        }
+    });
+    
+    let currentActiveTab = "Today";  // Change from "Day" to "Today"
+
+    // Add this code to initialize the Day tab on startup
+    // ------------------
+    // Make sure Day tab is visible by default
+    const dayTabContent = document.getElementById("Today");
+    if (dayTabContent) {
+        dayTabContent.style.display = "block";
+        
+        // Highlight the Day tab button
+        const dayTabButton = document.querySelector('.tablinks[data-tab="Today"]');
+        if (dayTabButton) {
+            dayTabButton.classList.add("active");
+        }
+    }
+    // ------------------
 
     const checkData = {
         "netflix": true,
@@ -44,10 +100,26 @@ document.addEventListener('DOMContentLoaded', function() {
     };
     
     // First, load saved state
-    // Important: Do this BEFORE setting up event listeners
-    chrome.storage.local.get(["checkPersist"], function(data) {
+    chrome.storage.local.get(["checkPersist", "firstTimeUser"], function(data) {
         console.log("Loading saved state:", data.checkPersist);
         const storedCheckData = data.checkPersist || {};
+        const isFirstTimeUser = data.firstTimeUser === undefined ? true : data.firstTimeUser;
+        
+        // Add this code to show welcome message for first-time users
+        // ------------------
+        if (isFirstTimeUser) {
+            showWelcomeMessage();
+            chrome.storage.local.set({ "firstTimeUser": false });
+        }
+        
+        // Check if there are any selected apps
+        const hasSelectedApps = Object.values(storedCheckData).some(value => value === true);
+        
+        // Show a message if user is returning but has no apps selected
+        if (!isFirstTimeUser && !hasSelectedApps) {
+            showNoAppsSelectedMessage();
+        }
+        // ------------------
         
         // Update checkData with saved values
         for (const appId in storedCheckData) {
@@ -69,6 +141,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         }
+
+        console.log("Tab content elements:", document.getElementsByClassName("tabcontent"));
+        console.log("Tab IDs:", Array.from(document.getElementsByClassName("tabcontent")).map(el => el.id));
     });
     
     const getRandomTimeAndPercentage = () => {
@@ -260,6 +335,51 @@ function createListItem(tab, app) {
  }
 
     
+    // Add these new functions inside your DOMContentLoaded event handler
+    function showWelcomeMessage() {
+        const welcomeDiv = document.createElement("div");
+        welcomeDiv.style.textAlign = "center";
+        welcomeDiv.style.padding = "20px";
+        welcomeDiv.style.margin = "15px";
+        welcomeDiv.style.backgroundColor = "#f8f9fa";
+        welcomeDiv.style.borderRadius = "8px";
+        welcomeDiv.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
+        
+        welcomeDiv.innerHTML = `
+            <h3 style="margin-bottom: 10px; color: #495057;">Welcome to Pretty Screentime!</h3>
+            <p style="color: #6c757d; margin-bottom: 8px;">Select the apps you want to monitor from the "Select" tab.</p>
+            <p style="color: #6c757d; margin-bottom: 8px;">Your screentime data will be displayed here once you start using those apps.</p>
+        `;
+        
+        // Insert at the top of the Day tab content
+        const dayTab = document.getElementById("Today");
+        if (dayTab) {
+            dayTab.insertBefore(welcomeDiv, dayTab.firstChild);
+        }
+
+        console.log("Attempting to show welcome message, Day tab element:", document.getElementById("Today"));
+    }
+    
+    function showNoAppsSelectedMessage() {
+        const messageDiv = document.createElement("div");
+        messageDiv.style.textAlign = "center";
+        messageDiv.style.padding = "20px";
+        messageDiv.style.margin = "15px";
+        messageDiv.style.backgroundColor = "#f8f9fa";
+        messageDiv.style.borderRadius = "8px";
+        messageDiv.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
+        
+        messageDiv.innerHTML = `
+            <h3 style="margin-bottom: 10px; color: #495057;">No apps selected</h3>
+            <p style="color: #6c757d; margin-bottom: 8px;">Go to the "Select" tab to choose which apps you want to monitor.</p>
+        `;
+        
+        // Insert at the top of the Day tab content
+        const dayTab = document.getElementById("Today");
+        if (dayTab) {
+            dayTab.insertBefore(messageDiv, dayTab.firstChild);
+        }
+    }
 });
 
 
