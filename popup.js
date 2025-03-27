@@ -1,7 +1,6 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log("Pretty Frontend is working ...")
-    let currentActiveTab = "";  // This will hold the currently active tab name
-
+    let currentActiveTab = "Day";  // Default to Day tab
 
     const checkData = {
         "netflix": true,
@@ -43,6 +42,35 @@ document.addEventListener('DOMContentLoaded', function() {
         "stack": "Stack Overflow",
         "leetcode": "Leetcode",
     };
+    
+    // First, load saved state
+    // Important: Do this BEFORE setting up event listeners
+    chrome.storage.local.get(["checkPersist"], function(data) {
+        console.log("Loading saved state:", data.checkPersist);
+        const storedCheckData = data.checkPersist || {};
+        
+        // Update checkData with saved values
+        for (const appId in storedCheckData) {
+            if (checkData.hasOwnProperty(appId)) {
+                // Update the internal state
+                checkData[appId] = storedCheckData[appId];
+                
+                // Update checkbox UI
+                const checkbox = document.getElementById(`${appId}Check`);
+                if (checkbox) {
+                    checkbox.checked = storedCheckData[appId];
+                    console.log(`Set ${appId} checkbox to ${checkbox.checked}`);
+                }
+                
+                // Create list items for checked apps
+                if (storedCheckData[appId]) {
+                    createListItem(currentActiveTab, appId);
+                    console.log(`Created list item for ${appId}`);
+                }
+            }
+        }
+    });
+    
     const getRandomTimeAndPercentage = () => {
         // Generate random hour and minute
         const hours = Math.floor(Math.random() * 24);
@@ -111,17 +139,20 @@ document.addEventListener('DOMContentLoaded', function() {
             const isChecked = event.target.checked;
 
             checkData[appId] = isChecked;
-            console.log(appId,"isChecked",checkData[appId]);
-            // chrome.storage.sync.set({ "checkPersist": checkData });
-
-            if (isChecked) {
-                console.log("true flag")
-            createListItem(currentActiveTab, appId);
-   
-            } else {
-                console.log("false flag")
-                removeApp(appId);
-            }
+            console.log(appId, "isChecked", checkData[appId]);
+            
+            // Save to storage - using storage.local instead of storage.sync
+            chrome.storage.local.set({ "checkPersist": checkData }, function() {
+                console.log("State saved:", checkData);
+                // Only proceed after save is confirmed
+                if (isChecked) {
+                    console.log("true flag")
+                    createListItem(currentActiveTab, appId);
+                } else {
+                    console.log("false flag")
+                    removeApp(appId);
+                }
+            });
         });
     });
 
