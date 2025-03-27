@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Pretty Screentime</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="card">
+        <div class="card-header">
+            <img src="lastlogo.png" alt="logo" class="logo">
+            <h4 class="card-title">PRETTY SCREENTIME</h4>
+        </div>
+        <div class="card-body">
+            <div class="tab">
+                <button class="tablinks" data-tab="day-tab">Today</button>
+                <button class="tablinks" data-tab="week-tab">Week</button>
+                <button class="tablinks" data-tab="select-tab">Select</button>
+            </div>
+            <div id="day-tab" class="tabcontent">
+                <ul class="list-group" id="day-list">
+                    <!-- <li class="main-list-group-item">
+
+                        <div class="content">
+                            <img src="assets/images/icons/netflix.png" alt="netflix" class="main-app-icon">
+                            <h6 class="app-name">Netflix</h6>
+                            <div class="time">3h10mn</div>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: 30%" aria-valuenow="30"
+                                aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </li>
+                    <li class="main-list-group-item">
+                        <div class="content">
+                            <img src="assets/images/icons/youtube.png" alt="youtube" class="main-app-icon">
+                            <h6 class="app-name">YouTube</h6>
+                            <div class="time">5h10mn</div>
+                        </div>
+                        <div class="progress">
+                            <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50"
+                                aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </li>
+
+                    <li class="list-group-item">
+                        <div style="display: flex;">
+                            <div class="chat-img ml-1 mb-1"><img src="assets/images/icons/${appName}.png"
+                                    alt="${appName}" class="rounded-square" width="25"></div>
+                            <div class="chat-content d-inline-block pl-3 pt-2" style="flex-grow: 1;">
+                                <h6 class="font-weight-medium">${formatAppName(appName)}</h6>
+                            </div>
+                            <div class="chat-time d-inline-block font-10 pt-2">${formatTime(dailyTime)}</div>
+                        </div>
+                        <div class="progress mb-3">
+                            <div class="progress-bar" role="progressbar"
+                                style="width: ${calculatePercentage(dailyTime, 1440)}%" aria-valuenow="100"
+                                aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+
+                    </li> -->
+                    <!-- Content for Today will be dynamically inserted by JavaScript -->
+                </ul>
+            </div>
+            <div id="week-tab" class="tabcontent" style="display: none;">
+                <ul class="list-group" id="week-list">
+                    <!-- Content for Week will be dynamically inserted by JavaScript -->
+                </ul>
+            </div>
+            <div id="select-tab" class="tabcontent" style="display: none;">
+                <ul class="list-group" id="select-list">
+                    <li class="list-group-item">
+                        <label class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="netflixCheck">
+                            <span class="custom-control-label">Netflix</span>
+                        </label>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="youtubeCheck">
+                            <span class="custom-control-label">YouTube</span>
+                        </label>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="twitterCheck">
+                            <span class="custom-control-label">Twitter</span>
+                        </label>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="facebookCheck">
+                            <span class="custom-control-label">Facebook</span>
+                        </label>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="instagramCheck">
+                            <span class="custom-control-label">Instagram</span>
+                        </label>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="pinterestCheck">
+                            <span class="custom-control-label">Pinterest</span>
+                        </label>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="redditCheck">
+                            <span class="custom-control-label">Reddit</span>
+                        </label>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="quoraCheck">
+                            <span class="custom-control-label">Quora</span>
+                        </label>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="amazonCheck">
+                            <span class="custom-control-label">Amazon</span>
+                        </label>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="linkedinCheck">
+                            <span class="custom-control-label">LinkedIn</span>
+                        </label>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="slackCheck">
+                            <span class="custom-control-label">Slack</span>
+                        </label>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="mediumCheck">
+                            <span class="custom-control-label">Medium</span>
+                        </label>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="twitchCheck">
+                            <span class="custom-control-label">Twitch</span>
+                        </label>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="discordCheck">
+                            <span class="custom-control-label">Discord</span>
+                        </label>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="stackCheck">
+                            <span class="custom-control-label">Stack Overflow</span>
+                        </label>
+                    </li>
+                    <li class="list-group-item">
+                        <label class="custom-control custom-checkbox">
+                            <input type="checkbox" class="custom-control-input" id="leetcodeCheck">
+                            <span class="custom-control-label">Leetcode</span>
+                        </label>
+                    </li>
+                    <!-- Repeat similar structure for other items -->
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script src="popup.js"></script>
+</body>
+
+</html>

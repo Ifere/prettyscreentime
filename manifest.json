@@ -1,0 +1,55 @@
+{
+    "manifest_version": 3, 
+    "name": "Pretty Screentime",
+    "description": "Reports Screen Time data of your favourite websites",
+    "version": "1.2.0",    
+    "content_scripts": [{
+        "matches": [
+    "*://*.youtube.com/*",
+    "*://*.netflix.com/*",
+    "*://*.facebook.com/*",
+    "*://*.instagram.com/*",
+    "*://*.twitter.com/*",
+    "*://*.medium.com/*",
+    "*://*.linkedin.com/*",
+    "*://*.slack.com/*",
+    "*://*.spotify.com/*",
+    "*://*.reddit.com/*",
+    "*://*.twitch.com/*",
+    "*://*.tumblr.com/*",
+    "*://*.discord.com/*",
+    "*://*.amazon.com/*",
+    "*://*.stackoverflow.com/*",
+    "*://*.leetcode.com/*",
+    "*://*.pinterest.com/*",
+    "*://*.quora.com/*"
+],
+        "js": ["server.js"]
+    }],
+
+    "background": {
+        "service_worker": "worker.js"
+    }, 
+
+    "icons": {
+        "16": "20.png",
+        "48": "48.png",
+        "128": "128.png"
+    },
+
+    "permissions": [
+      "storage",
+      "tabs",
+      "scripting",
+      "activeTab",
+      "webNavigation"
+
+
+    ],
+
+    "action": {
+        "default_icon": "lastlogo.png",
+        "default_popup": "index.html"
+    }
+
+  }

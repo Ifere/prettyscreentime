@@ -1,0 +1,243 @@
+/* style.css */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: #ddd;
+}
+
+.card {
+    border: 1px solid #ddd;
+    border-radius: 0px;
+    overflow: hidden;
+    width: 300px; /* Adjust width as necessary */
+    margin: 0px auto;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* subtle shadow */
+}
+
+.card-header {
+    background-color: #ffffff;
+    padding: 10px;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.card-title {
+    margin: 0;
+    margin-left: 10px;
+    color: #333;
+    font-size: 1.1rem; /* Adjust the font-size as needed */
+    font-weight: bold;
+}
+
+.logo {
+    width: 25px;
+    height: 25px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.card-body {
+    background-color: #ffffff;
+}
+
+.tab {
+    display: flex;
+    justify-content: space-around;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #ddd;
+}
+
+.tablinks {
+    border: none;
+    outline: none;
+    background: none;
+    padding: 10px;
+    cursor: pointer;
+    font-size: smaller;
+    text-align: center;
+    flex-grow: 1;
+    color: #555;
+    transition: color 0.2s;
+}
+
+.tablinks:focus {
+    color: #007bff;
+}
+
+.tablinks.active {
+    background-color: #ffffff;
+    color: #00100b;
+    border-top: 3px solid #d8315b;
+    /* border top color must be the same as tab border active fill color */
+    position: relative; /* needed to correctly position the border */
+    top: 1px; /* adjust top position to align with the content box */
+}
+
+.tabcontent {
+    display: none;
+    padding: 10px;
+}
+
+.tabcontent.show {
+    display: block;
+}
+
+.list-group {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.list-group-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+
+.list-group-item img {
+    margin-right: 10px;
+    width: 25px; /* set the size of icons */
+    height: 25px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.custom-control {
+    display: flex;
+    align-items: center;
+}
+
+.custom-control-label {
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.custom-control-input {
+    appearance:
+none;
+margin-right: 10px;
+}
+
+/* Add additional styles for hover effects and more precise matching to the design */
+.tablinks:hover {
+background-color: #e7e7e7;
+}
+
+/* Ensure the clickable tab area covers the tab top border of the tab content */
+.tablinks.active::after {
+content: '';
+position: absolute;
+left: 0;
+right: 0;
+top: 0;
+height: 3px;
+background-color: #9df7e5;
+/* must be the same as the border top color  */
+}
+
+.custom-control-input:checked + .custom-control-label::before {
+content: '\2714'; 
+display: inline-block;
+color: #00100b;
+/* color: #007bff; */
+font-size: 14px;
+line-height: 1;
+width: 16px;
+height: 16px;
+margin-right: 6px;
+text-align: center;
+border: 1px solid #ddd;
+border-radius: 2px;
+background: #dccde8;
+vertical-align: middle;
+}
+
+.custom-control-label::before {
+content: '';
+display: inline-block;
+width: 16px;
+height: 16px;
+margin-right: 6px;
+border: 1px solid #ddd;
+border-radius: 2px;
+background: #fff;
+vertical-align: middle;
+}
+
+.custom-control-input {
+position: absolute;
+z-index: -1;
+opacity: 0;
+}
+
+
+
+.main-list-group-item {
+    
+    display: flex;
+    flex-direction: column;
+    align-items: space-between;
+    background-color: #fff; /* Based on your image */
+    border-radius: 10px; /* Rounded corners as in your image */
+    margin-bottom: 10px; /* Space between items */
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* subtle shadow for depth */
+
+
+}
+
+.main-app-icon {
+    width: 20px; /* Adjust size as needed */
+    height: 20px;
+    border-radius: 50%; /* Makes the image round */
+    margin-right: 10px;
+    margin-top: auto;
+    object-fit: cover; /* Ensures the image covers the area */
+    align-self: flex-start;
+}
+
+.content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: row; /* Stack name and time vertically */
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.app-name {
+    font-size: 1rem; /* Adjust size as needed */
+    font-weight: bold;
+    margin: 0;
+    align-self: flex-start;
+    margin-right: auto;
+    margin-top: auto;
+    color: #00100b; /* Dark text color for readability */
+}
+
+.time {
+    font-size: 0.6rem; /* Slightly smaller font for time */
+    color: #00100b; /* Lighter text color for contrast */
+    align-self: flex-start;
+    margin-top: auto; /* Pushes the time to the top-right */}
+
+.progress {
+    width: 100%; /* Progress bar takes full width of the item */
+    background-color: #dccde8; /* Light grey background */
+    border-radius: 3px; /* Rounded corners for the progress bar */
+}
+
+.progress-bar {
+    background-color: #5f75e8; /* Blue progress bar as in your image */
+    height: 18px; /* Thickness of the progress bar */
+    border-radius: 3px; /* Rounded corners for the progress bar */
+}
