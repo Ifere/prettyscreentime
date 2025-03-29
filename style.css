@@ -11,6 +11,7 @@ body, html {
     border-radius: 0px;
     overflow: hidden;
     width: 300px; /* Adjust width as necessary */
+    height: 100%;
     margin: 0px auto;
     box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* subtle shadow */
 }

@@ -11,33 +11,59 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log("Made first tab visible:", tabElements[0].id);
     }
     
-    // 3. Add a welcome message directly to the body if it's a first-time user
+    // 3. Add a welcome message directly to the tab content if it's a first-time user
     chrome.storage.local.get("firstTimeUser", function(data) {
         const isFirstTimeUser = data.firstTimeUser === undefined ? true : data.firstTimeUser;
         
         if (isFirstTimeUser) {
-            // Create welcome message
+            // Create welcome message that replaces the first tab content initially
             const welcomeDiv = document.createElement("div");
-            welcomeDiv.style.position = "absolute";
-            welcomeDiv.style.top = "60px";
-            welcomeDiv.style.left = "10px";
-            welcomeDiv.style.right = "10px";
-            welcomeDiv.style.zIndex = "1000";
-            welcomeDiv.style.textAlign = "center";
-            welcomeDiv.style.padding = "15px";
-            welcomeDiv.style.backgroundColor = "#4CAF50";
+            welcomeDiv.className = "welcome-banner";
+            welcomeDiv.style.width = "100%";
+            welcomeDiv.style.backgroundColor = "#FF5733";
             welcomeDiv.style.color = "white";
+            welcomeDiv.style.padding = "15px 10px";
+            welcomeDiv.style.textAlign = "center";
+            welcomeDiv.style.marginBottom = "15px";
+            welcomeDiv.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
             welcomeDiv.style.borderRadius = "5px";
             
-            welcomeDiv.textContent = "Welcome to Pretty Screentime! Please select apps to monitor.";
+            welcomeDiv.innerHTML = `
+                <div style="font-size: 16px; font-weight: bold; margin-bottom: 8px;">👋 Welcome to Pretty Screentime!</div>
+                <div style="font-size: 14px;">Go to the <strong>Select</strong> tab to choose apps to monitor.</div>
+            `;
             
-            // Add to document body
-            document.body.appendChild(welcomeDiv);
-            
-            // Save that user has seen welcome
-            chrome.storage.local.set({ "firstTimeUser": false });
-            
-            console.log("Added welcome message to body");
+            // Find the first tab content container and insert at the beginning
+            const todayTab = document.getElementById("Today");
+            if (todayTab) {
+                // Insert as first element in the Today tab
+                if (todayTab.firstChild) {
+                    todayTab.insertBefore(welcomeDiv, todayTab.firstChild);
+                } else {
+                    todayTab.appendChild(welcomeDiv);
+                }
+                
+                // Make sure the Today tab is visible
+                todayTab.style.display = "block";
+                
+                // Save that user has seen welcome
+                chrome.storage.local.set({ "firstTimeUser": false });
+                
+                console.log("Added welcome message to Today tab");
+            } else {
+                // Fallback - try to add to the day-list element
+                const dayList = document.getElementById("day-list");
+                if (dayList) {
+                    dayList.parentNode.insertBefore(welcomeDiv, dayList);
+                    console.log("Added welcome message before day-list");
+                } else {
+                    // Last resort - add to body
+                    document.body.insertBefore(welcomeDiv, document.body.firstChild);
+                    console.log("Added welcome message to body as fallback");
+                }
+                
+                chrome.storage.local.set({ "firstTimeUser": false });
+            }
         }
     });
     
