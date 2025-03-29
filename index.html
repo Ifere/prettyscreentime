@@ -5,173 +5,182 @@
     <meta charset="UTF-8">
     <title>Pretty Screentime</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 
 <body>
     <div class="card">
+        <!-- Header with hamburger menu -->
         <div class="card-header">
-            <img src="lastlogo.png" alt="logo" class="logo">
-            <h4 class="card-title">PRETTY SCREENTIME</h4>
+            <div class="header-content">
+                <img src="/plogo128.png" alt="logo" class="logo">
+                <h4 class="card-title">Pretty Screentime</h4>
+                <button id="menu-toggle" class="menu-button">
+                    <span class="material-icons">menu</span>
+                </button>
+            </div>
         </div>
+
+        <!-- Hamburger menu sidebar -->
+        <div id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <img src="/plogo128.png" alt="logo" class="logo">
+                <h4>Pretty Screentime</h4>
+                <button id="close-menu" class="close-button">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <ul class="sidebar-menu">
+                <li data-page="overview-page" class="active"><span class="material-icons">dashboard</span>Overview</li>
+                <li data-page="settings-page"><span class="material-icons">settings</span>Settings</li>
+                <li data-page="focus-page"><span class="material-icons">do_not_disturb</span>Focus Mode</li>
+                <li data-page="stats-page"><span class="material-icons">bar_chart</span>Statistics</li>
+                <li data-page="about-page"><span class="material-icons">info</span>About</li>
+            </ul>
+        </div>
+
+        <!-- Main content area -->
         <div class="card-body">
-            <div class="tab">
-                <button class="tablinks" data-tab="day-tab">Today</button>
-                <button class="tablinks" data-tab="week-tab">Week</button>
-                <button class="tablinks" data-tab="select-tab">Select</button>
-            </div>
-            <div id="day-tab" class="tabcontent">
-                <ul class="list-group scroll-container" id="day-list">
-                    <!-- <li class="main-list-group-item">
+            <!-- Overview Page (Default) -->
+            <div id="overview-page" class="page active">
+                <div class="time-period-selector">
+                    <button class="period-button active" data-period="day">Day</button>
+                    <button class="period-button" data-period="week">Week</button>
+                    <button class="period-button" data-period="month">Month</button>
+                </div>
 
-                        <div class="content">
-                            <img src="assets/images/icons/netflix.png" alt="netflix" class="main-app-icon">
-                            <h6 class="app-name">Netflix</h6>
-                            <div class="time">3h10mn</div>
+                <div class="daily-summary">
+                    <div class="time-circle">
+                        <svg viewBox="0 0 100 100" class="progress-ring">
+                            <circle class="progress-ring-bg" cx="50" cy="50" r="45" />
+                            <circle class="progress-ring-circle" cx="50" cy="50" r="45" />
+                        </svg>
+                        <div class="time-display">
+                            <h2 id="total-time">4h 12m</h2>
+                            <p>Today</p>
                         </div>
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar" style="width: 30%" aria-valuenow="30"
-                                aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </li>
-                    <li class="main-list-group-item">
-                        <div class="content">
-                            <img src="assets/images/icons/youtube.png" alt="youtube" class="main-app-icon">
-                            <h6 class="app-name">YouTube</h6>
-                            <div class="time">5h10mn</div>
-                        </div>
-                        <div class="progress">
-                            <div class="progress-bar" role="progressbar" style="width: 50%" aria-valuenow="50"
-                                aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </li>
+                    </div>
+                </div>
 
-                    <li class="list-group-item">
-                        <div style="display: flex;">
-                            <div class="chat-img ml-1 mb-1"><img src="assets/images/icons/${appName}.png"
-                                    alt="${appName}" class="rounded-square" width="25"></div>
-                            <div class="chat-content d-inline-block pl-3 pt-2" style="flex-grow: 1;">
-                                <h6 class="font-weight-medium">${formatAppName(appName)}</h6>
-                            </div>
-                            <div class="chat-time d-inline-block font-10 pt-2">${formatTime(dailyTime)}</div>
-                        </div>
-                        <div class="progress mb-3">
-                            <div class="progress-bar" role="progressbar"
-                                style="width: ${calculatePercentage(dailyTime, 1440)}%" aria-valuenow="100"
-                                aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
+                <div id="app-list-container" class="app-list">
+                    <!-- App items will be inserted here via JavaScript -->
+                </div>
+            </div>
 
-                    </li> -->
-                    <!-- Content for Today will be dynamically inserted by JavaScript -->
-                </ul>
+            <!-- Settings Page -->
+            <div id="settings-page" class="page">
+                <h2>Settings</h2>
+                <div class="settings-container">
+                    <div class="settings-section">
+                        <h3>Tracked Apps</h3>
+                        <div class="app-toggles scroll-container">
+                            <!-- App toggles will be generated here -->
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div id="week-tab" class="tabcontent" style="display: none;">
-                <ul class="list-group scroll-container" id="week-list">
-                    <!-- Content for Week will be dynamically inserted by JavaScript -->
-                </ul>
+
+            <!-- Focus Mode Page -->
+            <div id="focus-page" class="page">
+                <h2>Focus Mode</h2>
+                <div class="focus-container">
+                    <div class="focus-header">
+                        <h3>Let's get focused!</h3>
+                    </div>
+                    <button id="start-focus" class="primary-button">Start Focus Mode</button>
+                    
+                    <div class="focus-apps-section">
+                        <h4>Block Websites</h4>
+                        <div id="focus-apps-list" class="focus-apps scroll-container">
+                            <!-- Focus mode app toggles will be generated here -->
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div id="select-tab" class="tabcontent" style="display: none;">
-                <ul class="list-group scroll-container" id="select-list">
-                    <li class="list-group-item">
-                        <label class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="netflixCheck">
-                            <span class="custom-control-label">Netflix</span>
-                        </label>
-                    </li>
-                    <li class="list-group-item">
-                        <label class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="youtubeCheck">
-                            <span class="custom-control-label">YouTube</span>
-                        </label>
-                    </li>
-                    <li class="list-group-item">
-                        <label class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="twitterCheck">
-                            <span class="custom-control-label">Twitter</span>
-                        </label>
-                    </li>
-                    <li class="list-group-item">
-                        <label class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="facebookCheck">
-                            <span class="custom-control-label">Facebook</span>
-                        </label>
-                    </li>
-                    <li class="list-group-item">
-                        <label class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="instagramCheck">
-                            <span class="custom-control-label">Instagram</span>
-                        </label>
-                    </li>
-                    <li class="list-group-item">
-                        <label class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="pinterestCheck">
-                            <span class="custom-control-label">Pinterest</span>
-                        </label>
-                    </li>
-                    <li class="list-group-item">
-                        <label class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="redditCheck">
-                            <span class="custom-control-label">Reddit</span>
-                        </label>
-                    </li>
-                    <li class="list-group-item">
-                        <label class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="quoraCheck">
-                            <span class="custom-control-label">Quora</span>
-                        </label>
-                    </li>
-                    <li class="list-group-item">
-                        <label class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="amazonCheck">
-                            <span class="custom-control-label">Amazon</span>
-                        </label>
-                    </li>
-                    <li class="list-group-item">
-                        <label class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="linkedinCheck">
-                            <span class="custom-control-label">LinkedIn</span>
-                        </label>
-                    </li>
-                    <li class="list-group-item">
-                        <label class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="slackCheck">
-                            <span class="custom-control-label">Slack</span>
-                        </label>
-                    </li>
-                    <li class="list-group-item">
-                        <label class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="mediumCheck">
-                            <span class="custom-control-label">Medium</span>
-                        </label>
-                    </li>
-                    <li class="list-group-item">
-                        <label class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="twitchCheck">
-                            <span class="custom-control-label">Twitch</span>
-                        </label>
-                    </li>
-                    <li class="list-group-item">
-                        <label class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="discordCheck">
-                            <span class="custom-control-label">Discord</span>
-                        </label>
-                    </li>
-                    <li class="list-group-item">
-                        <label class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="stackCheck">
-                            <span class="custom-control-label">Stack Overflow</span>
-                        </label>
-                    </li>
-                    <li class="list-group-item">
-                        <label class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="leetcodeCheck">
-                            <span class="custom-control-label">Leetcode</span>
-                        </label>
-                    </li>
-                    <!-- Repeat similar structure for other items -->
-                </ul>
+
+            <!-- Statistics Page -->
+            <div id="stats-page" class="page">
+                <h2>Usage Statistics</h2>
+                <div class="stats-container">
+                    <div id="app-details-container" class="app-details scroll-container">
+                        <!-- Individual app stats will go here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- About Page -->
+            <div id="about-page" class="page">
+                <div class="about-container">
+                    <img src="/plogo128.png" alt="logo" class="large-logo">
+                    <h2>Pretty Screentime</h2>
+                    <p>Let's track your screen time beautifully</p>
+                    <p class="version">Version 1.2.0</p>
+                    <div class="about-info">
+                        <p>Created by Immanuel Ifere</p>
+                        <p>Email: eefairay@gmail.com</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    <!-- Template for app items in the overview page -->
+    <template id="app-item-template">
+        <div class="app-item">
+            <div class="app-icon-container">
+                <img class="app-icon" src="" alt="">
+            </div>
+            <div class="app-details">
+                <h3 class="app-name"></h3>
+                <div class="progress-container">
+                    <div class="progress-bar"></div>
+                </div>
+            </div>
+            <div class="app-time"></div>
+        </div>
+    </template>
+
+    <!-- Template for app toggles in settings -->
+    <template id="app-toggle-template">
+        <div class="app-toggle">
+            <div class="toggle-left">
+                <div class="app-icon-container">
+                    <img class="app-icon" src="" alt="">
+                </div>
+                <span class="toggle-app-name"></span>
+            </div>
+            <label class="switch">
+                <input type="checkbox" class="toggle-checkbox">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </template>
+
+    <!-- Template for app stats in the statistics page -->
+    <template id="app-stats-template">
+        <div class="app-stat-card">
+            <div class="app-stat-header">
+                <div class="app-icon-container">
+                    <img class="app-icon" src="" alt="">
+                </div>
+                <h3 class="app-name"></h3>
+                <button class="close-stats">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <div class="app-usage-chart">
+                <div class="chart-container">
+                    <!-- Chart will be generated here -->
+                </div>
+                <div class="time-average">
+                    <h4 class="daily-avg">34 min</h4>
+                    <p>Daily Average</p>
+                </div>
+            </div>
+            <button class="edit-limit-button">Edit Limit</button>
+        </div>
+    </template>
+
     <script src="popup.js"></script>
 </body>
 

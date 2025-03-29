@@ -1,184 +1,405 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log("Pretty Frontend is working ...");
     
-    // 1. First, log all tab elements to see what's available
-    const tabElements = document.getElementsByClassName("tabcontent");
-    console.log("Tab elements:", tabElements);
+    // App data store
+    const appData = {
+        "netflix": { name: "Netflix", icon: "assets/images/icons/netflix.png" },
+        "youtube": { name: "YouTube", icon: "assets/images/icons/youtube.png" },
+        "twitter": { name: "Twitter", icon: "assets/images/icons/twitter.png" },
+        "facebook": { name: "Facebook", icon: "assets/images/icons/facebook.png" },
+        "instagram": { name: "Instagram", icon: "assets/images/icons/instagram.png" },
+        "pinterest": { name: "Pinterest", icon: "assets/images/icons/pinterest.png" },
+        "reddit": { name: "Reddit", icon: "assets/images/icons/reddit.png" },
+        "quora": { name: "Quora", icon: "assets/images/icons/quora.png" },
+        "amazon": { name: "Amazon", icon: "assets/images/icons/amazon.png" },
+        "spotify": { name: "Spotify", icon: "assets/images/icons/spotify.png" },
+        "tumblr": { name: "Tumblr", icon: "assets/images/icons/tumblr.png" },
+        "linkedin": { name: "LinkedIn", icon: "assets/images/icons/linkedin.png" },
+        "slack": { name: "Slack", icon: "assets/images/icons/slack.png" },
+        "medium": { name: "Medium", icon: "assets/images/icons/medium.png" },
+        "twitch": { name: "Twitch", icon: "assets/images/icons/twitch.png" },
+        "discord": { name: "Discord", icon: "assets/images/icons/discord.png" },
+        "stack": { name: "Stack Overflow", icon: "assets/images/icons/stack.png" },
+        "leetcode": { name: "Leetcode", icon: "assets/images/icons/leetcode.png" },
+    };
     
-    // 2. Force the first tab to be visible, regardless of ID
-    if (tabElements.length > 0) {
-        tabElements[0].style.display = "block";
-        console.log("Made first tab visible:", tabElements[0].id);
-    }
+    // State for app selection
+    let selectedApps = {};
     
-    // 3. Add a welcome message for first-time users
-    chrome.storage.local.get("firstTimeUser", function(data) {
+    // Current view state
+    let currentPage = 'overview-page';
+    let currentPeriod = 'day';
+    
+    // First-time user detection
+    chrome.storage.local.get(["firstTimeUser", "checkPersist"], function(data) {
         const isFirstTimeUser = data.firstTimeUser === undefined ? true : data.firstTimeUser;
+        selectedApps = data.checkPersist || {
+            "netflix": true,
+            "youtube": true,
+            "twitter": false,
+            "facebook": false,
+            "instagram": false,
+            "pinterest": false,
+            "reddit": false,
+            "quora": false,
+            "amazon": false,
+            "spotify": false,
+            "tumblr": false,
+            "linkedin": false,
+            "slack": false,
+            "medium": false,
+            "twitch": false,
+            "discord": false,
+            "stack": false,
+            "leetcode": false,
+        };
         
         if (isFirstTimeUser) {
-            // Wait a moment to ensure DOM is fully loaded
-            setTimeout(() => {
-                // Find the card element that contains the whole extension UI
-                const cardElement = document.querySelector('.card');
-                
-                if (cardElement) {
-                    // Create welcome overlay that covers the entire card
-                    const welcomeOverlay = document.createElement("div");
-                    welcomeOverlay.style.position = "absolute";
-                    welcomeOverlay.style.top = "0";
-                    welcomeOverlay.style.left = "0";
-                    welcomeOverlay.style.width = "100%";
-                    welcomeOverlay.style.height = "100%";
-                    welcomeOverlay.style.backgroundColor = "#4169E1"; // Royal Blue
-                    welcomeOverlay.style.color = "white";
-                    welcomeOverlay.style.display = "flex";
-                    welcomeOverlay.style.flexDirection = "column";
-                    welcomeOverlay.style.justifyContent = "center";
-                    welcomeOverlay.style.alignItems = "center";
-                    welcomeOverlay.style.padding = "20px";
-                    welcomeOverlay.style.boxSizing = "border-box";
-                    welcomeOverlay.style.zIndex = "1000";
-                    
-                    // Add welcome message content
-                    welcomeOverlay.innerHTML = `
-                        <h2 style="font-size: 18px; margin-bottom: 15px; text-align: center;">👋 Welcome to Pretty Screentime!</h2>
-                        <p style="font-size: 14px; margin-bottom: 20px; text-align: center;">Go to the <strong>Select</strong> tab to choose which apps you want to monitor.</p>
-                        <button id="getStartedBtn" style="background-color: #FF5733; color: white; border: none; padding: 12px 24px; border-radius: 5px; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">Get Started</button>
-                    `;
-                    
-                    // Add the overlay to the card
-                    cardElement.style.position = "relative"; // Ensure positioning context
-                    cardElement.appendChild(welcomeOverlay);
-                    
-                    // Add event listener to the Get Started button
-                    document.getElementById("getStartedBtn").addEventListener("click", function() {
-                        // Remove the overlay
-                        welcomeOverlay.remove();
-                        
-                        // Save that user has seen welcome
-                        // chrome.storage.local.set({ "firstTimeUser": false });
-                        
-                        // Switch to the Select tab
-                        const selectTabButton = document.querySelector('.tablinks[data-tab="select-tab"]');
-                        if (selectTabButton) {
-                            selectTabButton.click();
-                        }
-                    });
-                    
-                    console.log("Added welcome overlay to card element");
-                } else {
-                    console.error("Could not find card element to attach welcome message");
-                }
-            }, 100); // Short delay to ensure DOM is ready
+            showWelcomeScreen();
+        } else {
+            // Load app data and render UI
+            renderUI();
         }
     });
     
-    let currentActiveTab = "Today";  // Change from "Day" to "Today"
-
-    // Add this code to initialize the Day tab on startup
-    // ------------------
-    // Make sure Day tab is visible by default
-    const dayTabContent = document.getElementById("Today");
-    if (dayTabContent) {
-        dayTabContent.style.display = "block";
+    // Set up event listeners for menu and navigation
+    initEventListeners();
+    
+    function showWelcomeScreen() {
+        const cardElement = document.querySelector('.card');
         
-        // Highlight the Day tab button
-        const dayTabButton = document.querySelector('.tablinks[data-tab="Today"]');
-        if (dayTabButton) {
-            dayTabButton.classList.add("active");
+        if (cardElement) {
+            // Create welcome overlay
+            const welcomeOverlay = document.createElement("div");
+            welcomeOverlay.style.position = "absolute";
+            welcomeOverlay.style.top = "0";
+            welcomeOverlay.style.left = "0";
+            welcomeOverlay.style.width = "100%";
+            welcomeOverlay.style.height = "100%";
+            welcomeOverlay.style.backgroundColor = "var(--quaternary-color)";
+            welcomeOverlay.style.color = "white";
+            welcomeOverlay.style.display = "flex";
+            welcomeOverlay.style.flexDirection = "column";
+            welcomeOverlay.style.justifyContent = "center";
+            welcomeOverlay.style.alignItems = "center";
+            welcomeOverlay.style.padding = "20px";
+            welcomeOverlay.style.boxSizing = "border-box";
+            welcomeOverlay.style.zIndex = "1000";
+            welcomeOverlay.style.textAlign = "center";
+            
+            // Add welcome message content
+            welcomeOverlay.innerHTML = `
+                <img src="/plogo500.png" alt="logo" style="width: 80px; height: 80px; margin-bottom: 20px;">
+                <h2 style="font-size: 24px; margin-bottom: 15px;">Pretty Screentime</h2>
+                <p style="font-size: 16px; margin-bottom: 35px;">Let's track your screen time beautifully</p>
+                <button id="getStartedBtn" style="background-color: var(--white); color: var(--secondary-color); border: none; padding: 12px 30px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">Continue</button>
+            `;
+            
+            // Add the overlay to the card
+            cardElement.style.position = "relative";
+            cardElement.appendChild(welcomeOverlay);
+            
+            // Add event listener to the Get Started button
+            document.getElementById("getStartedBtn").addEventListener("click", function() {
+                // Remove the overlay
+                welcomeOverlay.remove();
+                
+                // Save that user has seen welcome
+                chrome.storage.local.set({ "firstTimeUser": false });
+                
+                // Navigate to settings page to select apps
+                showPage('settings-page');
+                
+                // Render the UI
+                renderUI();
+            });
         }
     }
-    // ------------------
-
-    const checkData = {
-        "netflix": true,
-        "youtube": true,
-        "twitter": false,
-        "facebook": false,
-        "instagram": false,
-        "pinterest": false,
-        "reddit": false,
-        "quora": false,
-        "amazon": false,
-        "spotify": false,
-        "tumblr": false,
-        "linkedin": false,
-        "slack": false,
-        "medium": false,
-        "twitch": false,
-        "discord": false,
-        "stack": false,
-        "leetcode": false,
-    };
-    const appNameStore = {
-        "netflix": "Netflix",
-        "youtube": "YouTube",
-        "twitter": "Twitter",
-        "facebook": "Facebook",
-        "instagram": "Instagram",
-        "pinterest": "Pinterest",
-        "reddit": "Reddit",
-        "quora": "Quora",
-        "amazon": "Amazon",
-        "spotify": "Spotify",
-        "tumblr": "Tumblr",
-        "linkedin": "LinkedIn",
-        "slack": "Slack",
-        "medium": "Medium",
-        "twitch": "Twitch",
-        "discord": "Discord",
-        "stack": "Stack Overflow",
-        "leetcode": "Leetcode",
-    };
     
-    // First, load saved state
-    chrome.storage.local.get(["checkPersist", "firstTimeUser"], function(data) {
-        console.log("Loading saved state:", data.checkPersist);
-        const storedCheckData = data.checkPersist || {};
-        const isFirstTimeUser = data.firstTimeUser === undefined ? true : data.firstTimeUser;
+    function initEventListeners() {
+        // Hamburger menu toggle
+        document.getElementById('menu-toggle').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.add('open');
+        });
         
-        // Add this code to show welcome message for first-time users
-        // ------------------
-        if (isFirstTimeUser) {
-            showWelcomeMessage();
-            // chrome.storage.local.set({ "firstTimeUser": false });
+        // Close menu button
+        document.getElementById('close-menu').addEventListener('click', function() {
+            document.getElementById('sidebar').classList.remove('open');
+        });
+        
+        // Sidebar menu navigation
+        document.querySelectorAll('.sidebar-menu li').forEach(item => {
+            item.addEventListener('click', function() {
+                const pageName = this.getAttribute('data-page');
+                showPage(pageName);
+                document.getElementById('sidebar').classList.remove('open');
+            });
+        });
+        
+        // Time period selector
+        document.querySelectorAll('.period-button').forEach(button => {
+            button.addEventListener('click', function() {
+                const period = this.getAttribute('data-period');
+                setActivePeriod(period);
+                updateAppList(period);
+            });
+        });
+        
+        // Focus mode button
+        document.getElementById('start-focus').addEventListener('click', function() {
+            alert('Focus mode would be activated here');
+            // Implementation would go here
+        });
+    }
+    
+    function showPage(pageName) {
+        // Hide all pages
+        document.querySelectorAll('.page').forEach(page => {
+            page.classList.remove('active');
+        });
+        
+        // Show the selected page
+        document.getElementById(pageName).classList.add('active');
+        
+        // Update sidebar highlight
+        document.querySelectorAll('.sidebar-menu li').forEach(item => {
+            item.classList.remove('active');
+        });
+        document.querySelector(`.sidebar-menu li[data-page="${pageName}"]`).classList.add('active');
+        
+        currentPage = pageName;
+        
+        // Special handling for different pages
+        if (pageName === 'settings-page') {
+            renderAppToggles();
+        } else if (pageName === 'focus-page') {
+            renderFocusAppList();
+        } else if (pageName === 'stats-page') {
+            renderStatisticsPage();
         }
+    }
+    
+    function setActivePeriod(period) {
+        document.querySelectorAll('.period-button').forEach(button => {
+            button.classList.remove('active');
+        });
+        document.querySelector(`.period-button[data-period="${period}"]`).classList.add('active');
+        currentPeriod = period;
+    }
+    
+    function renderUI() {
+        // Populate the app list in the overview page
+        updateAppList(currentPeriod);
         
-        // Check if there are any selected apps
-        const hasSelectedApps = Object.values(storedCheckData).some(value => value === true);
+        // Initialize the settings page toggles
+        renderAppToggles();
         
-        // Show a message if user is returning but has no apps selected
-        if (!isFirstTimeUser && !hasSelectedApps) {
-            showNoAppsSelectedMessage();
-        }
-        // ------------------
+        // Set up focus mode app list
+        renderFocusAppList();
+    }
+    
+    function updateAppList(period) {
+        const appListContainer = document.getElementById('app-list-container');
+        appListContainer.innerHTML = '';
         
-        // Update checkData with saved values
-        for (const appId in storedCheckData) {
-            if (checkData.hasOwnProperty(appId)) {
-                // Update the internal state
-                checkData[appId] = storedCheckData[appId];
+        let totalTime = 0;
+        const appItems = [];
+        
+        // Get app usage data for the selected period
+        for (const appId in selectedApps) {
+            if (selectedApps[appId]) {
+                const timeData = getRandomTimeAndPercentage();
+                const timeValue = timeData[0];
+                const percentage = timeData[1];
+                totalTime += parseInt(timeValue.split('h')[0]) * 60 + parseInt(timeValue.split('h')[1].replace('mn', ''));
                 
-                // Update checkbox UI
-                const checkbox = document.getElementById(`${appId}Check`);
-                if (checkbox) {
-                    checkbox.checked = storedCheckData[appId];
-                    console.log(`Set ${appId} checkbox to ${checkbox.checked}`);
-                }
-                
-                // Create list items for checked apps
-                if (storedCheckData[appId]) {
-                    createListItem(currentActiveTab, appId);
-                    console.log(`Created list item for ${appId}`);
-                }
+                appItems.push({
+                    appId: appId,
+                    name: appData[appId].name,
+                    icon: appData[appId].icon,
+                    time: timeValue,
+                    percentage: percentage
+                });
             }
         }
-
-        console.log("Tab content elements:", document.getElementsByClassName("tabcontent"));
-        console.log("Tab IDs:", Array.from(document.getElementsByClassName("tabcontent")).map(el => el.id));
-    });
+        
+        // Sort apps by usage time (descending)
+        appItems.sort((a, b) => {
+            const timeA = parseInt(a.time.split('h')[0]) * 60 + parseInt(a.time.split('h')[1].replace('mn', ''));
+            const timeB = parseInt(b.time.split('h')[0]) * 60 + parseInt(b.time.split('h')[1].replace('mn', ''));
+            return timeB - timeA;
+        });
+        
+        // Update the total time display
+        const hours = Math.floor(totalTime / 60);
+        const minutes = totalTime % 60;
+        document.getElementById('total-time').textContent = `${hours}h ${minutes}m`;
+        
+        // Update the circular progress
+        const progressRing = document.querySelector('.progress-ring-circle');
+        // Calculate percentage of day spent (assuming 16 waking hours)
+        const maxMinutes = period === 'day' ? 16 * 60 : (period === 'week' ? 16 * 60 * 7 : 16 * 60 * 30);
+        const percentage = Math.min(100, (totalTime / maxMinutes) * 100);
+        const circumference = 2 * Math.PI * 45;
+        progressRing.style.strokeDasharray = circumference;
+        progressRing.style.strokeDashoffset = circumference - (percentage / 100) * circumference;
+        
+        // Create and append app items
+        appItems.forEach(item => {
+            const appElement = createAppElement(item.appId, item.name, item.icon, item.time, item.percentage);
+            appListContainer.appendChild(appElement);
+            
+            // Add click event to show app details
+            appElement.addEventListener('click', () => {
+                showAppDetails(item.appId);
+            });
+        });
+        
+        // Show a message if no apps are selected
+        if (appItems.length === 0) {
+            const emptyMessage = document.createElement('div');
+            emptyMessage.className = 'empty-message';
+            emptyMessage.innerHTML = `
+                <p>No apps selected for tracking.</p>
+                <p>Go to Settings to select apps you want to monitor.</p>
+            `;
+            emptyMessage.style.textAlign = 'center';
+            emptyMessage.style.color = 'var(--dark-gray)';
+            emptyMessage.style.padding = '40px 20px';
+            appListContainer.appendChild(emptyMessage);
+        }
+    }
     
-    const getRandomTimeAndPercentage = () => {
+    function createAppElement(appId, name, icon, time, percentage) {
+        const template = document.getElementById('app-item-template');
+        const appElement = template.content.cloneNode(true);
+        
+        appElement.querySelector('.app-icon').src = icon;
+        appElement.querySelector('.app-icon').alt = appId;
+        appElement.querySelector('.app-name').textContent = name;
+        appElement.querySelector('.progress-bar').style.width = `${percentage}%`;
+        appElement.querySelector('.app-time').textContent = time;
+        
+        return appElement.querySelector('.app-item');
+    }
+    
+    function renderAppToggles() {
+        const togglesContainer = document.querySelector('.app-toggles');
+        togglesContainer.innerHTML = '';
+        
+        // Create toggles for all available apps
+        for (const appId in appData) {
+            const template = document.getElementById('app-toggle-template');
+            const toggleElement = template.content.cloneNode(true);
+            
+            toggleElement.querySelector('.app-icon').src = appData[appId].icon;
+            toggleElement.querySelector('.app-icon').alt = appId;
+            toggleElement.querySelector('.toggle-app-name').textContent = appData[appId].name;
+            toggleElement.querySelector('.toggle-checkbox').checked = selectedApps[appId] || false;
+            toggleElement.querySelector('.toggle-checkbox').id = `${appId}-toggle`;
+            
+            // Add event listener for toggle changes
+            toggleElement.querySelector('.toggle-checkbox').addEventListener('change', function(event) {
+                selectedApps[appId] = event.target.checked;
+                
+                // Save to storage
+                chrome.storage.local.set({ "checkPersist": selectedApps }, function() {
+                    console.log("App selection saved:", selectedApps);
+                    
+                    // Update app list if visible
+                    if (currentPage === 'overview-page') {
+                        updateAppList(currentPeriod);
+                    }
+                });
+            });
+            
+            togglesContainer.appendChild(toggleElement);
+        }
+    }
+    
+    function renderFocusAppList() {
+        const focusAppsList = document.getElementById('focus-apps-list');
+        focusAppsList.innerHTML = '';
+        
+        // Only show app toggles for apps that are currently being tracked
+        for (const appId in selectedApps) {
+            if (selectedApps[appId]) {
+                const template = document.getElementById('app-toggle-template');
+                const toggleElement = template.content.cloneNode(true);
+                
+                toggleElement.querySelector('.app-icon').src = appData[appId].icon;
+                toggleElement.querySelector('.app-icon').alt = appId;
+                toggleElement.querySelector('.toggle-app-name').textContent = appData[appId].name;
+                toggleElement.querySelector('.toggle-checkbox').checked = false; // Default to unchecked for focus mode
+                toggleElement.querySelector('.toggle-checkbox').id = `${appId}-focus-toggle`;
+                
+                focusAppsList.appendChild(toggleElement);
+            }
+        }
+    }
+    
+    function showAppDetails(appId) {
+        // Navigate to statistics page
+        showPage('stats-page');
+        
+        // Clear any existing stats
+        const appDetailsContainer = document.getElementById('app-details-container');
+        appDetailsContainer.innerHTML = '';
+        
+        // Create and show app stats card
+        const template = document.getElementById('app-stats-template');
+        const statsElement = template.content.cloneNode(true);
+        
+        statsElement.querySelector('.app-icon').src = appData[appId].icon;
+        statsElement.querySelector('.app-icon').alt = appId;
+        statsElement.querySelector('.app-name').textContent = appData[appId].name;
+        
+        // Mock data - would be replaced with real data
+        const timeData = getRandomTimeAndPercentage();
+        statsElement.querySelector('.daily-avg').textContent = timeData[0].split('h')[0] + ' min';
+        
+        // Add chart (simplified placeholder)
+        const chartContainer = statsElement.querySelector('.chart-container');
+        chartContainer.innerHTML = createSimpleChart();
+        
+        // Add close button functionality
+        statsElement.querySelector('.close-stats').addEventListener('click', function() {
+            showPage('overview-page');
+        });
+        
+        // Add edit limit button functionality
+        statsElement.querySelector('.edit-limit-button').addEventListener('click', function() {
+            alert(`You would set a limit for ${appData[appId].name} here`);
+        });
+        
+        appDetailsContainer.appendChild(statsElement);
+    }
+    
+    function createSimpleChart() {
+        // Create a simple bar chart as a placeholder
+        // In a real implementation, you would use a proper charting library
+        const values = [20, 35, 25, 45, 30, 55, 40];
+        const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+        
+        let chartHtml = '<div style="display: flex; justify-content: space-between; align-items: flex-end; height: 100%;">';
+        
+        values.forEach((value, index) => {
+            const height = (value / 60) * 100; // Scale to percentage of chart height (max 1 hour)
+            
+            chartHtml += `
+                <div style="display: flex; flex-direction: column; align-items: center; width: ${100 / values.length}%;">
+                    <div style="background-color: var(--secondary-color); height: ${height}%; width: 80%; border-radius: 4px;"></div>
+                    <div style="font-size: 10px; color: var(--dark-gray); margin-top: 4px;">${daysOfWeek[index]}</div>
+                </div>
+            `;
+        });
+        
+        chartHtml += '</div>';
+        return chartHtml;
+    }
+    
+    // Utility function to generate random time data
+    function getRandomTimeAndPercentage() {
         // Generate random hour and minute
         const hours = Math.floor(Math.random() * 24);
         const minutes = Math.floor(Math.random() * 60);
@@ -193,337 +414,5 @@ document.addEventListener('DOMContentLoaded', function() {
     
         // Return formatted time and percentage
         return [`${formattedHours}h ${formattedMinutes}mn`, percentageOfDay];
-    };
-
-    const getWeeklyTimes = () => {
-
-    }
-
-    const getDailyTimes = () => {
-
-    }
-    
-    // Example usage:
-    
-    console.log(checkData.netflix);
-
-
-    // Event listeners for tab buttons
-    document.querySelectorAll('.tablinks').forEach(tab => {
-        tab.addEventListener('click', function(evt) {
-            openTab(evt, this.getAttribute('data-tab'));
-        });
-    });
-
-    // Define the openTab function
-    function openTab(evt, tabName) {
-        currentActiveTab = tabName;
-        console.log("current Tab"+currentActiveTab);
-
-        let tabcontent = document.getElementsByClassName("tabcontent");
-        let tablinks = document.getElementsByClassName("tablinks");
-        // console.log(tabcontent)
-        console.log(tablinks)
-
-
-        for (let i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-        }
-
-        for (let i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-
-
-        document.getElementById(tabName).style.display = "block";
-        evt.currentTarget.className += " active";
-
-    }
-
-    document.querySelectorAll('.custom-control-input').forEach(item => {
-        item.addEventListener('change', event => {
-            const appId = event.target.id.replace('Check', '');
-            const isChecked = event.target.checked;
-
-            checkData[appId] = isChecked;
-            console.log(appId, "isChecked", checkData[appId]);
-            
-            // Save to storage - using storage.local instead of storage.sync
-            chrome.storage.local.set({ "checkPersist": checkData }, function() {
-                console.log("State saved:", checkData);
-                // Only proceed after save is confirmed
-                if (isChecked) {
-                    console.log("true flag")
-                    createListItem(currentActiveTab, appId);
-                } else {
-                    console.log("false flag")
-                    removeApp(appId);
-                }
-            });
-        });
-    });
-
-    // function renderApp(appId) {
-    //     const dailyElement = document.createElement("li");
-    //     dailyElement.id = `${appId}-daily`;
-    //     dailyElement.textContent = `${appId} content for Daily`;
-    //     document.getElementById("daily").appendChild(dailyElement);
-
-    //     const weeklyElement = document.createElement("li");
-    //     weeklyElement.id = `${appId}-weekly`;
-    //     weeklyElement.textContent = `${appId} content for Weekly`;
-    //     document.getElementById("weekly").appendChild(weeklyElement);
-    // }
-
-    function removeApp(appId) {
-        const dailyElement = document.getElementById(`${appId}-daily`);
-        if (dailyElement) dailyElement.remove();
-
-        const weeklyElement = document.getElementById(`${appId}-weekly`);
-        if (weeklyElement) weeklyElement.remove();
-    }
-
-    // chrome.storage.sync.get(["checkPersist"], function(data) {
-    //     const storedCheckData = data.checkPersist || {};
-    //     for (const appId in storedCheckData) {
-    //         if (storedCheckData[appId]) {
-    //             renderApp(appId);
-    //         }
-    //     }
-    // });
-
-function rendererApp(appId, range, timeSpent, percentage) {
-    // Create the main list item container
-    const listItem = document.createElement("li");
-    listItem.className = 'main-list-group-item';
-    listItem.id = `${appId}-${range}`;
-    
-    // Add some consistent spacing/margin
-    listItem.style.marginBottom = "15px";
-    
-    // Create the content div and append it to the list item
-    const contentDiv = document.createElement("div");
-    contentDiv.className = 'content';
-    listItem.appendChild(contentDiv);
-
-    // Create and append the image (app icon) to the content div
-    const appIcon = document.createElement("img");
-    appIcon.src = `assets/images/icons/${appId}.png`;
-    appIcon.alt = `${appId}`;
-    appIcon.className = 'main-app-icon';
-    contentDiv.appendChild(appIcon);
-
-    // Create and append the app name heading to the content div
-    const appNameHeading = document.createElement("h6");
-    appNameHeading.className = 'app-name';
-    appNameHeading.textContent = appNameStore[appId];
-    contentDiv.appendChild(appNameHeading);
-
-    // Create and append the time spent div to the content div
-    const timeDiv = document.createElement("div");
-    timeDiv.className = 'time';
-    timeDiv.textContent = timeSpent;
-    contentDiv.appendChild(timeDiv);
-
-    // Create the progress bar container and append it to the list item
-    const progressDiv = document.createElement("div");
-    progressDiv.className = 'progress';
-    listItem.appendChild(progressDiv);
-
-    // Create the progress bar and append it to the progress bar container
-    const progressBar = document.createElement("div");
-    progressBar.className = 'progress-bar';
-    progressBar.setAttribute('role', 'progressbar');
-    progressBar.setAttribute('style', `width: ${percentage}%`);
-    progressBar.setAttribute('aria-valuenow', percentage.toString());
-    progressBar.setAttribute('aria-valuemin', '0');
-    progressBar.setAttribute('aria-valuemax', '100');
-    progressDiv.appendChild(progressBar);
-
-    return listItem;
-}
-function createListItem(tab, app) {
-    const appId = app
-    const timeandpercentD = getRandomTimeAndPercentage();
-    const timeandpercentW = getRandomTimeAndPercentage();
-
-    let weekItem =  rendererApp(appId,"weekly", timeandpercentW[0], timeandpercentW[1]);
-    let dayItem =  rendererApp(appId,"daily", timeandpercentD[0], timeandpercentD[1]);
- console.log("current",tab)
- document.getElementById("day-list").appendChild(dayItem);
- document.getElementById('week-list').appendChild(weekItem);
-
-
-
- }
-
-    
-    // Add these new functions inside your DOMContentLoaded event handler
-    function showWelcomeMessage() {
-        const welcomeDiv = document.createElement("div");
-        welcomeDiv.style.textAlign = "center";
-        welcomeDiv.style.padding = "20px";
-        welcomeDiv.style.margin = "15px";
-        welcomeDiv.style.backgroundColor = "#f8f9fa";
-        welcomeDiv.style.borderRadius = "8px";
-        welcomeDiv.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
-        
-        welcomeDiv.innerHTML = `
-            <h3 style="margin-bottom: 10px; color: #495057;">Welcome to Pretty Screentime!</h3>
-            <p style="color: #6c757d; margin-bottom: 8px;">Select the apps you want to monitor from the "Select" tab.</p>
-            <p style="color: #6c757d; margin-bottom: 8px;">Your screentime data will be displayed here once you start using those apps.</p>
-        `;
-        
-        // Insert at the top of the Day tab content
-        const dayTab = document.getElementById("Today");
-        if (dayTab) {
-            dayTab.insertBefore(welcomeDiv, dayTab.firstChild);
-        }
-
-        console.log("Attempting to show welcome message, Day tab element:", document.getElementById("Today"));
-    }
-    
-    function showNoAppsSelectedMessage() {
-        const messageDiv = document.createElement("div");
-        messageDiv.style.textAlign = "center";
-        messageDiv.style.padding = "20px";
-        messageDiv.style.margin = "15px 0";
-        messageDiv.style.backgroundColor = "#f8f9fa";
-        messageDiv.style.borderRadius = "8px";
-        messageDiv.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
-        
-        messageDiv.innerHTML = `
-            <h3 style="margin-bottom: 15px; color: #495057;">No apps selected</h3>
-            <p style="color: #6c757d; margin-bottom: 15px;">Go to the "Select" tab to choose which apps you want to monitor.</p>
-        `;
-        
-        // Create sample UI item to show how it would look
-        const sampleItem = document.createElement("div");
-        sampleItem.className = "sample-item";
-        sampleItem.style.marginTop = "20px";
-        sampleItem.style.opacity = "0.5";
-        sampleItem.style.pointerEvents = "none";
-        
-        // Example of how data will be displayed
-        const demoApps = ["netflix", "youtube"];
-        demoApps.forEach(app => {
-            const item = rendererApp(app, "demo", "00h 00mn", 0);
-            item.style.opacity = "0.5";
-            item.style.backgroundColor = "#f8f9fa";
-            sampleItem.appendChild(item);
-        });
-        
-        messageDiv.appendChild(sampleItem);
-        
-        // Insert at the top of the Day tab content
-        const dayTab = document.getElementById("Today");
-        if (dayTab) {
-            dayTab.insertBefore(messageDiv, dayTab.firstChild);
-        }
     }
 });
-
-
-
-
-
-
-
-
-/*window.onload = function() {
-    console.log("checked popup first")
-
-    // Assuming checkData is predefined and stores the checkbox state
-    const checkData = {
-        "netflix": false,
-        "youtube": false,
-        "twitter": false,
-        "facebook": false,
-        "instagram": false,
-        "pinterest": false,
-        "reddit": false,
-        "quora": false,
-        "amazon": false,
-        "spotify": false,
-        "tumblr": false,
-        "linkedin": false,
-        "slack": false,
-        "medium": false,
-        "twitch": false,
-        "discord": false,
-        "stack": false,
-        "leetcode": false,
-    };
-    console.log(checkData.netflix);
-    function openTab(evt, tabName) {
-        console.log("open Tab")
-        let i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("tabcontent");
-        for (i = 0; i < tabcontent.length; i++) {
-            tabcontent[i].style.display = "none";
-        }
-        tablinks = document.getElementsByClassName("tablinks");
-        for (i = 0; i < tablinks.length; i++) {
-            tablinks[i].className = tablinks[i].className.replace(" active", "");
-        }
-        document.getElementById(tabName).style.display = "block";
-        evt.currentTarget.className += " active";
-    }
-
-    document.getElementById("select-tab").onclick = function(event) {
-        openTab(event, 'Select');
-    };
-
-    document.querySelectorAll('.custom-control-input').forEach(item => {
-        item.addEventListener('change', (event) => {
-            const appId = event.target.id.replace('Check', '');
-            const isChecked = event.target.checked;
-
-            checkData[appId] = isChecked;
-            chrome.storage.sync.set({ "checkPersist": checkData });
-
-            if (isChecked) {
-                renderApp(appId);
-            } else {
-                removeApp(appId);
-            }
-        });
-    });
-
-    function renderApp(appId) {
-        // Dynamically create the content for the app in both Daily and Weekly tabs
-        const dailyElement = document.createElement("li");
-        dailyElement.id = `${appId}-daily`;
-        dailyElement.textContent = `${appId} content for Daily`; // Placeholder content
-        document.getElementById("daily").appendChild(dailyElement);
-
-        const weeklyElement = document.createElement("li");
-        weeklyElement.id = `${appId}-weekly`;
-        weeklyElement.textContent = `${appId} content for Weekly`; // Placeholder content
-        document.getElementById("weekly").appendChild(weeklyElement);
-    }
-
-    function removeApp(appId) {
-        // Remove the content for the app from both Daily and Weekly tabs
-        const dailyElement = document.getElementById(`${appId}-daily`);
-        if (dailyElement) {
-            dailyElement.remove();
-        }
-
-        const weeklyElement = document.getElementById(`${appId}-weekly`);
-        if (weeklyElement) {
-            weeklyElement.remove();
-        }
-    }
-
-    // Initial load: render apps based on stored data
-    chrome.storage.sync.get(["checkPersist"], function(data) {
-        const storedCheckData = data.checkPersist || {};
-        for (const appId in storedCheckData) {
-            if (storedCheckData[appId]) {
-                renderApp(appId);
-            }
-        }
-    });
-};
- */

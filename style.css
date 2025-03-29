@@ -1,313 +1,634 @@
 /* style.css */
+/* Color scheme based on reference images */
+:root {
+    --primary-color: #20C997; /* Mint color for primary elements */
+    --secondary-color: #5F75E8; /* Blue color for secondary elements */
+    --tertiary-color: #ebe5f1; /* Mint color for primary elements */
+    --quaternary-color: #0d142b; /* Light gray color for background */
+    --accent-color: #D8315B; /* Red color for accents/highlights */
+    --dark-color: #001B2E; /* Dark blue almost black color */
+    --light-color: #DCCDE8; /* Light lavender color */
+    --white: #fefaf5;
+    --light-gray: #ede9e0;
+    --medium-gray: #e1ded6;
+    --dark-gray: #6C757D;
+    --black: #212529;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --card-radius: 12px;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body, html {
     margin: 0;
     padding: 0;
-    font-family: 'Arial', sans-serif;
-    background-color: #ffffff;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: var(--light-gray);
     height: 500px;
     overflow: hidden;
+    color: var(--black);
 }
 
 .card {
-    border: 1px solid #ddd;
-    border-radius: 0px;
+    border-radius: var(--card-radius);
     overflow: hidden;
-    width: 300px; /* Adjust width as necessary */
+    width: 300px;
     height: 100%;
-    margin: 0px auto;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* subtle shadow */
+    margin: 0 auto;
+    box-shadow: var(--shadow);
+    position: relative;
+    background-color: var(--white);
 }
 
+/* Header Styles */
 .card-header {
-    background-color: #ffffff;
-    padding: 10px;
-    text-align: center;
+    background-color: var(--white);
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--medium-gray);
+}
+
+.header-content {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
+}
+
+.logo {
+    width: 28px;
+    height: 28px;
+    object-fit: cover;
+    border-radius: 50%;
 }
 
 .card-title {
     margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--black);
+    flex-grow: 1;
     margin-left: 10px;
-    color: #333;
-    font-size: 1.1rem; /* Adjust the font-size as needed */
-    font-weight: bold;
 }
 
-.logo {
-    width: 25px;
-    height: 25px;
-    object-fit: cover;
+.menu-button, .close-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--dark-gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
     border-radius: 50%;
+    transition: background-color 0.2s ease;
 }
 
+.menu-button:hover, .close-button:hover {
+    background-color: var(--light-gray);
+}
+
+/* Sidebar Styles */
+.sidebar {
+    position: absolute;
+    top: 0;
+    left: -300px;
+    width: 250px;
+    height: 100%;
+    background-color: var(--white);
+    z-index: 1000;
+    box-shadow: var(--shadow);
+    transition: left 0.3s ease;
+    padding: 0;
+}
+
+.sidebar.open {
+    left: 0;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid var(--medium-gray);
+}
+
+.sidebar-header h4 {
+    margin-left: 10px;
+    font-size: 1.1rem;
+    flex-grow: 1;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.sidebar-menu li.active {
+    background-color: var(--light-gray);
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.sidebar-menu li:hover {
+    background-color: var(--light-gray);
+}
+
+.sidebar-menu li .material-icons {
+    margin-right: 10px;
+    font-size: 20px;
+}
+
+/* Main Content Area */
 .card-body {
-    background-color: #ffffff;
-    height: calc(500px - 45px); /* Total height minus header height */
+    background-color: var(--white);
+    height: calc(500px - 52px); /* Adjust for header */
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
-.tab {
-    display: flex;
-    justify-content: space-around;
-    background-color: #f8f8f8;
-    border-bottom: 1px solid #ddd;
-    flex-shrink: 0; /* Prevent the tab bar from shrinking */
-}
-
-.tablinks {
-    border: none;
-    outline: none;
-    background: none;
-    padding: 10px;
-    cursor: pointer;
-    font-size: smaller;
-    text-align: center;
-    flex-grow: 1;
-    color: #555;
-    transition: color 0.2s;
-}
-
-.tablinks:focus {
-    color: #007bff;
-}
-
-.tablinks.active {
-    background-color: #ffffff;
-    color: #00100b;
-    border-top: 3px solid #d8315b;
-    /* border top color must be the same as tab border active fill color */
-    position: relative; /* needed to correctly position the border */
-    top: 1px; /* adjust top position to align with the content box */
-}
-
-.tabcontent {
+/* Page Styles */
+.page {
     display: none;
-    padding: 10px 10px 25px 10px; /* top right bottom left */
-    background-color: #ffffff;
+    flex-direction: column;
+    padding: 16px;
+    height: 100%;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,0,0,0.1) transparent;
+}
+
+.page.active {
+    display: flex;
+}
+
+.page h2 {
+    font-size: 1.25rem;
+    margin-bottom: 16px;
+    color: var(--black);
+}
+
+/* Overview Page Styles */
+.time-period-selector {
+    display: flex;
+    background-color: var(--light-gray);
+    border-radius: 20px;
+    padding: 4px;
+    margin-bottom: 20px;
+}
+
+.period-button {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    background: none;
+    border-radius: 18px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.period-button.active {
+    background-color: var(--white);
+    color: var(--black);
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.daily-summary {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.time-circle {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.progress-ring {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.progress-ring-bg {
+    fill: none;
+    stroke: var(--light-gray);
+    stroke-width: 8;
+}
+
+.progress-ring-circle {
+    fill: none;
+    stroke: var(--primary-color);
+    stroke-width: 8;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 70; /* Adjust based on percentage */
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s ease;
+}
+
+.time-display {
+    position: absolute;
+    text-align: center;
+}
+
+.time-display h2 {
+    font-size: 0.5rem;
+    font-weight: 300;
+    margin: 0;
+    color: var(--black);
+}
+
+.time-display p {
+    font-size: 0.8rem;
+    color: var(--dark-gray);
+    margin: 0;
+}
+
+.app-list {
     flex: 1;
     overflow-y: auto;
     scrollbar-width: thin;
-    scrollbar-color: rgba(0,0,0,0.2) transparent;
+    scrollbar-color: rgba(0,0,0,0.1) transparent;
 }
 
-/* Chrome, Safari, Edge scrollbar styling */
-.tabcontent::-webkit-scrollbar {
-    width: 4px;
-}
-
-.tabcontent::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-.tabcontent::-webkit-scrollbar-thumb {
-    background-color: rgba(0,0,0,0.1);
-    border-radius: 6px;
-    border: transparent;
-}
-
-.tabcontent::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(0,0,0,0.2);
-}
-
-/* Show scrollbar only on hover */
-.tabcontent:not(:hover)::-webkit-scrollbar-thumb {
-    background: transparent;
-}
-
-/* Firefox-specific smooth scrolling */
-.tabcontent {
-    scroll-behavior: smooth;
-}
-
-.day-tab, .week-tab {
-    background-color: #ffffff;
-    min-height: 400px;
-}
-
-.tabcontent.show {
-    display: block;
-}
-
-.list-group {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    overflow: visible;
-    padding-bottom: 2px; /* Extra padding at the bottom to ensure last item is visible */
-}
-
-#day-list, #week-list, #select-list {
-    padding-bottom: 2px; /* Increased padding to ensure last item is visible */
-}
-
-.list-group-item {
+.app-item {
     display: flex;
     align-items: center;
     padding: 10px;
-    border-bottom: 1px solid #ddd;
-}
-
-.list-group-item:last-child {
-    border-bottom: none;
-}
-
-.list-group-item img {
-    margin-right: 10px;
-    width: 25px; /* set the size of icons */
-    height: 25px;
-    object-fit: cover;
-    border-radius: 50%;
-}
-
-.custom-control {
-    display: flex;
-    align-items: center;
-}
-
-.custom-control-label {
-    margin-left: 10px;
-    display: flex;
-    align-items: center;
-    cursor: pointer;
-}
-
-.custom-control-input {
-    appearance:
-none;
-margin-right: 10px;
-}
-
-/* Add additional styles for hover effects and more precise matching to the design */
-.tablinks:hover {
-background-color: #e7e7e7;
-}
-
-/* Ensure the clickable tab area covers the tab top border of the tab content */
-.tablinks.active::after {
-content: '';
-position: absolute;
-left: 0;
-right: 0;
-top: 0;
-height: 3px;
-/* background-color: #009D94  ; */
-/* must be the same as the border top color  */
-}
-
-.custom-control-input:checked + .custom-control-label::before {
-content: '\2714'; 
-display: inline-block;
-color: #00100b;
-/* color: #007bff; */
-font-size: 14px;
-line-height: 1;
-width: 16px;
-height: 16px;
-margin-right: 6px;
-text-align: center;
-border: 1px solid #ddd;
-border-radius: 2px;
-background: #dccde8;
-vertical-align: middle;
-}
-
-.custom-control-label::before {
-content: '';
-display: inline-block;
-width: 16px;
-height: 16px;
-margin-right: 6px;
-border: 1px solid #ddd;
-border-radius: 2px;
-background: #fff;
-vertical-align: middle;
-}
-
-.custom-control-input {
-position: absolute;
-z-index: -1;
-opacity: 0;
-}
-
-.main-list-group-item {
-    display: flex;
-    flex-direction: column;
-    align-items: space-between;
-    background-color: #fff;
+    background-color: var(--white);
     border-radius: 10px;
-    margin-bottom: 15px; /* Increased margin between items */
-    padding: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
 }
 
-.main-app-icon {
-    width: 20px; /* Adjust size as needed */
-    height: 20px;
-    border-radius: 50%; /* Makes the image round */
-    margin-right: 10px;
-    margin-top: auto;
-    object-fit: cover; /* Ensures the image covers the area */
-    align-self: flex-start;
-}
-
-.content {
-    flex-grow: 1;
+.app-icon-container {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--light-gray);
     display: flex;
-    flex-direction: row; /* Stack name and time vertically */
-    justify-content: space-between;
-    margin-bottom: 8px;
+    justify-content: center;
+    align-items: center;
+}
+
+.app-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.app-details {
+    flex: 1;
+    margin-left: 12px;
 }
 
 .app-name {
-    font-size: 1rem; /* Adjust size as needed */
-    font-weight: bold;
-    margin: 0;
-    align-self: flex-start;
-    margin-right: auto;
-    margin-top: auto;
-    color: #00100b; /* Dark text color for readability */
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 4px;
 }
 
-.time {
-    font-size: 0.6rem; /* Slightly smaller font for time */
-    color: #00100b; /* Lighter text color for contrast */
-    align-self: flex-start;
-    margin-top: auto; /* Pushes the time to the top-right */}
-
-.progress {
-    width: 100%; /* Progress bar takes full width of the item */
-    background-color: #dccde8; /* Light grey background */
-    border-radius: 3px; /* Rounded corners for the progress bar */
+.progress-container {
+    height: 6px;
+    background-color: var(--light-gray);
+    border-radius: 3px;
+    overflow: hidden;
 }
 
 .progress-bar {
-    background-color: #5f75e8; /* Blue progress bar as in your image */
-    height: 18px; /* Thickness of the progress bar */
-    border-radius: 3px; /* Rounded corners for the progress bar */
-}
-
-/* Add this for smoother scrolling experience */
-.scroll-container {
-    background-color: #fff;
-    padding-right: 5px;
-    padding-bottom: 5px; /* Add padding to ensure the last item is fully visible */
-    -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
-}
-
-/* Ensure that the tabs have the proper styling for scrolling */
-#day-tab, #week-tab, #select-tab {
     height: 100%;
-    overflow-y: auto;
-    padding-bottom: 2px; /* Add padding at the bottom of the tab content */
+    background-color: var(--secondary-color);
+    border-radius: 3px;
 }
 
-/* Fix for the container to always scroll to the bottom */
-#day-list:after, #week-list:after, #select-list:after {
+.app-time {
+    font-size: 0.9rem;
+    color: var(--dark-gray);
+    margin-left: 10px;
+    white-space: nowrap;
+}
+
+/* Settings Page Styles */
+.settings-container {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.settings-section {
+    margin-bottom: 20px;
+}
+
+.settings-section h3 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+    color: var(--black);
+}
+
+.app-toggles {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.app-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.toggle-left {
+    display: flex;
+    align-items: center;
+}
+
+.toggle-app-name {
+    margin-left: 12px;
+    font-size: 0.9rem;
+}
+
+/* Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--medium-gray);
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
     content: "";
-    display: block;
-    height: 2px; /* Extra space at the bottom */
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--white);
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(16px);
+}
+
+/* Focus Mode Page Styles */
+.focus-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.focus-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.focus-header h3 {
+    font-size: 1.2rem;
+    color: var(--black);
+}
+
+.primary-button {
+    background-color: var(--secondary-color);
+    color: var(--white);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(95, 117, 232, 0.3);
+    transition: all 0.2s ease;
+    margin-bottom: 24px;
+}
+
+.primary-button:hover {
+    background-color: #4a63e0;
+    transform: translateY(-2px);
+}
+
+.focus-apps-section {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.focus-apps-section h4 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+    color: var(--black);
+}
+
+.focus-apps {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Statistics Page Styles */
+.stats-container {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.app-stat-card {
+    background-color: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 16px;
+    margin-bottom: 20px;
+}
+
+.app-stat-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.app-stat-header h3 {
+    flex: 1;
+    margin-left: 12px;
+    font-size: 1.1rem;
+}
+
+.app-usage-chart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.chart-container {
+    width: 100%;
+    height: 150px;
+    margin-bottom: 12px;
+    background-color: var(--light-gray);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.time-average {
+    text-align: center;
+}
+
+.time-average h4 {
+    font-size: 1.8rem;
+    color: var(--black);
+    margin-bottom: 4px;
+}
+
+.time-average p {
+    font-size: 0.9rem;
+    color: var(--dark-gray);
+}
+
+.edit-limit-button {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--white);
+    border: 1px solid var(--secondary-color);
+    color: var(--secondary-color);
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.edit-limit-button:hover {
+    background-color: var(--light-gray);
+}
+
+.close-stats {
+    background: none;
+    border: none;
+    color: var(--dark-gray);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+}
+
+/* About Page Styles */
+.about-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    height: 100%;
+}
+
+.large-logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 16px;
+}
+
+.about-container h2 {
+    margin-bottom: 8px;
+}
+
+.version {
+    color: var(--dark-gray);
+    font-size: 0.8rem;
+    margin-top: 16px;
+    margin-bottom: 24px;
+}
+
+.about-info {
+    color: var(--dark-gray);
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Scrollbar Styles */
+.page::-webkit-scrollbar,
+.app-list::-webkit-scrollbar,
+.settings-container::-webkit-scrollbar,
+.stats-container::-webkit-scrollbar {
+    width: 1px;
+}
+
+.page::-webkit-scrollbar-track,
+.app-list::-webkit-scrollbar-track,
+.settings-container::-webkit-scrollbar-track,
+.stats-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.page::-webkit-scrollbar-thumb,
+.app-list::-webkit-scrollbar-thumb,
+.settings-container::-webkit-scrollbar-thumb,
+.stats-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 4px;
+}
+
+.page:not(:hover)::-webkit-scrollbar-thumb,
+.app-list:not(:hover)::-webkit-scrollbar-thumb,
+.settings-container:not(:hover)::-webkit-scrollbar-thumb,
+.stats-container:not(:hover)::-webkit-scrollbar-thumb {
+    background: transparent;
+}
+
+/* Responsive adjustments */
+@media (max-height: 600px) {
+    .time-circle {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .time-display h2 {
+        font-size: 1.8rem;
+    }
 }
