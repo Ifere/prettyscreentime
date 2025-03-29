@@ -11,59 +11,65 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log("Made first tab visible:", tabElements[0].id);
     }
     
-    // 3. Add a welcome message directly to the tab content if it's a first-time user
+    // 3. Add a welcome message for first-time users
     chrome.storage.local.get("firstTimeUser", function(data) {
         const isFirstTimeUser = data.firstTimeUser === undefined ? true : data.firstTimeUser;
         
         if (isFirstTimeUser) {
-            // Create welcome message that replaces the first tab content initially
-            const welcomeDiv = document.createElement("div");
-            welcomeDiv.className = "welcome-banner";
-            welcomeDiv.style.width = "100%";
-            welcomeDiv.style.backgroundColor = "#FF5733";
-            welcomeDiv.style.color = "white";
-            welcomeDiv.style.padding = "15px 10px";
-            welcomeDiv.style.textAlign = "center";
-            welcomeDiv.style.marginBottom = "15px";
-            welcomeDiv.style.boxShadow = "0 2px 6px rgba(0,0,0,0.2)";
-            welcomeDiv.style.borderRadius = "5px";
-            
-            welcomeDiv.innerHTML = `
-                <div style="font-size: 16px; font-weight: bold; margin-bottom: 8px;">👋 Welcome to Pretty Screentime!</div>
-                <div style="font-size: 14px;">Go to the <strong>Select</strong> tab to choose apps to monitor.</div>
-            `;
-            
-            // Find the first tab content container and insert at the beginning
-            const todayTab = document.getElementById("Today");
-            if (todayTab) {
-                // Insert as first element in the Today tab
-                if (todayTab.firstChild) {
-                    todayTab.insertBefore(welcomeDiv, todayTab.firstChild);
+            // Wait a moment to ensure DOM is fully loaded
+            setTimeout(() => {
+                // Find the card element that contains the whole extension UI
+                const cardElement = document.querySelector('.card');
+                
+                if (cardElement) {
+                    // Create welcome overlay that covers the entire card
+                    const welcomeOverlay = document.createElement("div");
+                    welcomeOverlay.style.position = "absolute";
+                    welcomeOverlay.style.top = "0";
+                    welcomeOverlay.style.left = "0";
+                    welcomeOverlay.style.width = "100%";
+                    welcomeOverlay.style.height = "100%";
+                    welcomeOverlay.style.backgroundColor = "#4169E1"; // Royal Blue
+                    welcomeOverlay.style.color = "white";
+                    welcomeOverlay.style.display = "flex";
+                    welcomeOverlay.style.flexDirection = "column";
+                    welcomeOverlay.style.justifyContent = "center";
+                    welcomeOverlay.style.alignItems = "center";
+                    welcomeOverlay.style.padding = "20px";
+                    welcomeOverlay.style.boxSizing = "border-box";
+                    welcomeOverlay.style.zIndex = "1000";
+                    
+                    // Add welcome message content
+                    welcomeOverlay.innerHTML = `
+                        <h2 style="font-size: 18px; margin-bottom: 15px; text-align: center;">👋 Welcome to Pretty Screentime!</h2>
+                        <p style="font-size: 14px; margin-bottom: 20px; text-align: center;">Go to the <strong>Select</strong> tab to choose which apps you want to monitor.</p>
+                        <button id="getStartedBtn" style="background-color: #FF5733; color: white; border: none; padding: 12px 24px; border-radius: 5px; font-size: 14px; font-weight: bold; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">Get Started</button>
+                    `;
+                    
+                    // Add the overlay to the card
+                    cardElement.style.position = "relative"; // Ensure positioning context
+                    cardElement.appendChild(welcomeOverlay);
+                    
+                    // Add event listener to the Get Started button
+                    document.getElementById("getStartedBtn").addEventListener("click", function() {
+                        // Remove the overlay
+                        welcomeOverlay.remove();
+                        
+                        // Save that user has seen welcome
+                        // chrome.storage.local.set({ "firstTimeUser": false });
+                        
+                        // Switch to the Select tab
+                        const selectTabButton = document.querySelector('.tablinks[data-tab="select-tab"]');
+                        if (selectTabButton) {
+                            selectTabButton.click();
+                        }
+                    });
+                    
+                    console.log("Added welcome overlay to card element");
                 } else {
-                    todayTab.appendChild(welcomeDiv);
+                    console.error("Could not find card element to attach welcome message");
                 }
-                
-                // Make sure the Today tab is visible
-                todayTab.style.display = "block";
-                
-                // Save that user has seen welcome
-                chrome.storage.local.set({ "firstTimeUser": false });
-                
-                console.log("Added welcome message to Today tab");
-            } else {
-                // Fallback - try to add to the day-list element
-                const dayList = document.getElementById("day-list");
-                if (dayList) {
-                    dayList.parentNode.insertBefore(welcomeDiv, dayList);
-                    console.log("Added welcome message before day-list");
-                } else {
-                    // Last resort - add to body
-                    document.body.insertBefore(welcomeDiv, document.body.firstChild);
-                    console.log("Added welcome message to body as fallback");
-                }
-                
-                chrome.storage.local.set({ "firstTimeUser": false });
-            }
+            }, 100); // Short delay to ensure DOM is ready
         }
     });
     
@@ -135,7 +141,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // ------------------
         if (isFirstTimeUser) {
             showWelcomeMessage();
-            chrome.storage.local.set({ "firstTimeUser": false });
+            // chrome.storage.local.set({ "firstTimeUser": false });
         }
         
         // Check if there are any selected apps
@@ -287,13 +293,14 @@ document.addEventListener('DOMContentLoaded', function() {
     // });
 
 function rendererApp(appId, range, timeSpent, percentage) {
-    // console.log("beginning render")
     // Create the main list item container
     const listItem = document.createElement("li");
     listItem.className = 'main-list-group-item';
     listItem.id = `${appId}-${range}`;
-
-
+    
+    // Add some consistent spacing/margin
+    listItem.style.marginBottom = "15px";
+    
     // Create the content div and append it to the list item
     const contentDiv = document.createElement("div");
     contentDiv.className = 'content';
@@ -333,17 +340,7 @@ function rendererApp(appId, range, timeSpent, percentage) {
     progressBar.setAttribute('aria-valuemax', '100');
     progressDiv.appendChild(progressBar);
 
-    // Append the list item to the appropriate container in the DOM
-    // For example, appending to a 'ul' with id 'app-list'
-    return listItem
-
-
-    // }
-    // if (tabName === "Week") {
-    //     console.log(tabName)
-
-
-    // }
+    return listItem;
 }
 function createListItem(tab, app) {
     const appId = app
@@ -390,15 +387,33 @@ function createListItem(tab, app) {
         const messageDiv = document.createElement("div");
         messageDiv.style.textAlign = "center";
         messageDiv.style.padding = "20px";
-        messageDiv.style.margin = "15px";
+        messageDiv.style.margin = "15px 0";
         messageDiv.style.backgroundColor = "#f8f9fa";
         messageDiv.style.borderRadius = "8px";
         messageDiv.style.boxShadow = "0 2px 4px rgba(0,0,0,0.1)";
         
         messageDiv.innerHTML = `
-            <h3 style="margin-bottom: 10px; color: #495057;">No apps selected</h3>
-            <p style="color: #6c757d; margin-bottom: 8px;">Go to the "Select" tab to choose which apps you want to monitor.</p>
+            <h3 style="margin-bottom: 15px; color: #495057;">No apps selected</h3>
+            <p style="color: #6c757d; margin-bottom: 15px;">Go to the "Select" tab to choose which apps you want to monitor.</p>
         `;
+        
+        // Create sample UI item to show how it would look
+        const sampleItem = document.createElement("div");
+        sampleItem.className = "sample-item";
+        sampleItem.style.marginTop = "20px";
+        sampleItem.style.opacity = "0.5";
+        sampleItem.style.pointerEvents = "none";
+        
+        // Example of how data will be displayed
+        const demoApps = ["netflix", "youtube"];
+        demoApps.forEach(app => {
+            const item = rendererApp(app, "demo", "00h 00mn", 0);
+            item.style.opacity = "0.5";
+            item.style.backgroundColor = "#f8f9fa";
+            sampleItem.appendChild(item);
+        });
+        
+        messageDiv.appendChild(sampleItem);
         
         // Insert at the top of the Day tab content
         const dayTab = document.getElementById("Today");

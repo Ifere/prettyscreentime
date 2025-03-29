@@ -3,7 +3,9 @@ body, html {
     margin: 0;
     padding: 0;
     font-family: 'Arial', sans-serif;
-    background-color: #ddd;
+    background-color: #ffffff;
+    height: 500px;
+    overflow: hidden;
 }
 
 .card {
@@ -42,6 +44,10 @@ body, html {
 
 .card-body {
     background-color: #ffffff;
+    height: calc(500px - 45px); /* Total height minus header height */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 .tab {
@@ -49,6 +55,7 @@ body, html {
     justify-content: space-around;
     background-color: #f8f8f8;
     border-bottom: 1px solid #ddd;
+    flex-shrink: 0; /* Prevent the tab bar from shrinking */
 }
 
 .tablinks {
@@ -79,7 +86,46 @@ body, html {
 
 .tabcontent {
     display: none;
-    padding: 10px;
+    padding: 10px 10px 25px 10px; /* top right bottom left */
+    background-color: #ffffff;
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,0,0,0.2) transparent;
+}
+
+/* Chrome, Safari, Edge scrollbar styling */
+.tabcontent::-webkit-scrollbar {
+    width: 4px;
+}
+
+.tabcontent::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.tabcontent::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 6px;
+    border: transparent;
+}
+
+.tabcontent::-webkit-scrollbar-thumb:hover {
+    background-color: rgba(0,0,0,0.2);
+}
+
+/* Show scrollbar only on hover */
+.tabcontent:not(:hover)::-webkit-scrollbar-thumb {
+    background: transparent;
+}
+
+/* Firefox-specific smooth scrolling */
+.tabcontent {
+    scroll-behavior: smooth;
+}
+
+.day-tab, .week-tab {
+    background-color: #ffffff;
+    min-height: 400px;
 }
 
 .tabcontent.show {
@@ -90,6 +136,12 @@ body, html {
     list-style-type: none;
     padding: 0;
     margin: 0;
+    overflow: visible;
+    padding-bottom: 2px; /* Extra padding at the bottom to ensure last item is visible */
+}
+
+#day-list, #week-list, #select-list {
+    padding-bottom: 2px; /* Increased padding to ensure last item is visible */
 }
 
 .list-group-item {
@@ -142,7 +194,7 @@ left: 0;
 right: 0;
 top: 0;
 height: 3px;
-background-color: #9df7e5;
+/* background-color: #009D94  ; */
 /* must be the same as the border top color  */
 }
 
@@ -181,20 +233,15 @@ z-index: -1;
 opacity: 0;
 }
 
-
-
 .main-list-group-item {
-    
     display: flex;
     flex-direction: column;
     align-items: space-between;
-    background-color: #fff; /* Based on your image */
-    border-radius: 10px; /* Rounded corners as in your image */
-    margin-bottom: 10px; /* Space between items */
+    background-color: #fff;
+    border-radius: 10px;
+    margin-bottom: 15px; /* Increased margin between items */
     padding: 10px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* subtle shadow for depth */
-
-
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .main-app-icon {
@@ -241,4 +288,26 @@ opacity: 0;
     background-color: #5f75e8; /* Blue progress bar as in your image */
     height: 18px; /* Thickness of the progress bar */
     border-radius: 3px; /* Rounded corners for the progress bar */
+}
+
+/* Add this for smoother scrolling experience */
+.scroll-container {
+    background-color: #fff;
+    padding-right: 5px;
+    padding-bottom: 5px; /* Add padding to ensure the last item is fully visible */
+    -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
+}
+
+/* Ensure that the tabs have the proper styling for scrolling */
+#day-tab, #week-tab, #select-tab {
+    height: 100%;
+    overflow-y: auto;
+    padding-bottom: 2px; /* Add padding at the bottom of the tab content */
+}
+
+/* Fix for the container to always scroll to the bottom */
+#day-list:after, #week-list:after, #select-list:after {
+    content: "";
+    display: block;
+    height: 2px; /* Extra space at the bottom */
 }
