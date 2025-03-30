@@ -300,11 +300,14 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (period === 'week') {
             const dayOfMonth = now.getDate();
             const weekOfMonth = Math.ceil(dayOfMonth / 7);
+            const monthsOfYear = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            const currMonth = monthsOfYear[now.getMonth()]
+            const monthsWithLessThan31Days = ["February", "April", "June", "September", "November"];
             let suffix = 'th';
             if (weekOfMonth === 1) suffix = 'st';
             else if (weekOfMonth === 2) suffix = 'nd';
             else if (weekOfMonth === 3) suffix = 'rd';
-            labelText = `${weekOfMonth}${suffix} Week`;
+            labelText = (dayOfMonth > 21 && monthsWithLessThan31Days.includes(currMonth)) ? `${weekOfMonth}${suffix} Week` : 'Last Week';
         } else { // month
             const monthsOfYear = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
             labelText = monthsOfYear[now.getMonth()];
