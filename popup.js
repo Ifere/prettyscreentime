@@ -307,46 +307,48 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     }
                 }
-            } else { // month - TEMPORARY TEST: Only check today's data
-                console.log("[Month Aggregation TEST] Starting - Checking only today...");
-                totalTimeInMinutes = 0; 
-                appTotals = {}; 
+            } else { // month - Iterate through existing data within the last 30 days
+                console.log("[Month Aggregation v2] Starting...");
+                totalTimeInMinutes = 0;
+                appTotals = {};
 
-                // --- ONLY CHECK i=0 (Today) for testing ---
-                const i = 0; 
-                const date = new Date(today);
-                // date.setDate(today.getDate() - i); // Not needed for i=0
-                const dayKey = getDayKey(date);
-                const weekKey = getWeekKey(date); 
-                console.log(`[Month Aggregation TEST] Checking DayKey: ${dayKey}, WeekKey: ${weekKey}`); 
+                const thirtyDaysAgo = new Date(today);
+                thirtyDaysAgo.setDate(today.getDate() - 30);
+                thirtyDaysAgo.setHours(0, 0, 0, 0); // Set to start of the day for comparison
 
-                // ---> Log data right before access <---
-                console.log(`[Month Aggregation TEST i=${i}] screenTimeData for weekKey access:`, JSON.parse(JSON.stringify(screenTimeData)));
-                console.log(`[Month Aggregation TEST i=${i}] currentSelectedApps for check:`, JSON.parse(JSON.stringify(currentSelectedApps)));
+                console.log(`[Month Aggregation v2] Aggregating data since ${thirtyDaysAgo.toISOString()}`);
 
-                const weekData = screenTimeData[weekKey];
-                if (weekData) {
-                    const dayData = weekData[dayKey];
-                    if (dayData) {
-                        console.log(`[Month Aggregation TEST] Found dayData for ${dayKey}:`, JSON.parse(JSON.stringify(dayData))); 
-                        for (const appId in dayData) {
-                            if (currentSelectedApps[appId] && dayData[appId]) { 
-                                const timeMs = dayData[appId].timeSpentMs || 0;
-                                console.log(`[Month Aggregation TEST] Matched App: ${appId}, Selected: ${currentSelectedApps[appId]}, TimeMs: ${timeMs}`);
-                                const timeMinutes = Math.round(timeMs / 60000);
-                                if (timeMinutes > 0) {
-                                    console.log(`[Month Aggregation TEST] Found ${timeMinutes}m for ${appId} on ${dayKey}`);
+                // Iterate through existing week keys in the data
+                for (const weekKey in screenTimeData) {
+                    const weekData = screenTimeData[weekKey];
+                    // Iterate through existing day keys in the week
+                    for (const dayKey in weekData) {
+                        try {
+                            // Convert dayKey string (YYYY-MM-DD) to Date object
+                            const dayDate = new Date(dayKey + 'T00:00:00Z'); // Add time/Z for proper UTC parsing
+                            
+                            // Check if this day is within the last 30 days
+                            if (dayDate >= thirtyDaysAgo) {
+                                console.log(`[Month Aggregation v2] Processing data for ${dayKey}`);
+                                const dayData = weekData[dayKey];
+                                for (const appId in dayData) {
+                                    if (currentSelectedApps[appId] && dayData[appId]) {
+                                        const timeMs = dayData[appId].timeSpentMs || 0;
+                                        const timeMinutes = Math.round(timeMs / 60000);
+                                        console.log(`[Month Aggregation v2] Found ${timeMinutes}m for ${appId} on ${dayKey}`);
+                                        appTotals[appId] = (appTotals[appId] || 0) + timeMinutes;
+                                    }
                                 }
-                                appTotals[appId] = (appTotals[appId] || 0) + timeMinutes;
                             }
+                        } catch (dateError) {
+                            console.error(`[Month Aggregation v2] Error processing dayKey ${dayKey}:`, dateError);
                         }
-                    } 
-                } 
-                // --- End ONLY CHECK i=0 ---
-                
-                console.log("[Month Aggregation TEST] Final appTotals before reduce:", JSON.parse(JSON.stringify(appTotals))); 
-                totalTimeInMinutes = Object.values(appTotals).reduce((sum, time) => sum + time, 0);
-                console.log("[Month Aggregation TEST] Final totalTimeInMinutes:", totalTimeInMinutes);
+                    }
+                }
+
+                 console.log("[Month Aggregation v2] Final appTotals before reduce:", JSON.parse(JSON.stringify(appTotals))); 
+                 totalTimeInMinutes = Object.values(appTotals).reduce((sum, time) => sum + time, 0);
+                 console.log("[Month Aggregation v2] Final totalTimeInMinutes:", totalTimeInMinutes);
             }
             // --- End Data Aggregation ---
 
@@ -394,7 +396,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 startOfWeek.setDate(now.getDate() - dayOfWeek);
                 const endOfWeek = new Date(startOfWeek);
                 endOfWeek.setDate(startOfWeek.getDate() + 6);
-                labelText = `Week of ${startOfWeek.getDate()}${getOrdinalSuffix(startOfWeek.getDate())}`;
+                labelText = (dayOfMonth > 21 && monthsWithLessThan31Days.includes(currMonth)) ? `${weekOfMonth}${suffix} Week` : '5th Week';
+                
             } else { // month
                 const monthsOfYear = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
                 labelText = monthsOfYear[now.getMonth()];
