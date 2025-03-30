@@ -90,8 +90,8 @@ document.addEventListener('DOMContentLoaded', function() {
             // Add welcome message content
             welcomeOverlay.innerHTML = `
                 <img src="/plogo500.png" alt="logo" style="width: 80px; height: 80px; margin-bottom: 20px;">
-                <h2 style="font-size: 24px; margin-bottom: 15px;">Pretty Screentime</h2>
-                <p style="font-size: 16px; margin-bottom: 35px;">Let's track your screen time beautifully</p>
+                <h2 style="font-size: 24px; margin-bottom: 15px;">Pretty Screentime✨</h2>
+                <p style="font-size: 16px; margin-bottom: 35px;">Hello👋🏼 and welcome! It's time to track your screen time beautifully😉</p>
                 <button id="getStartedBtn" style="background-color: var(--white); color: var(--secondary-color); border: none; padding: 12px 30px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">Continue</button>
             `;
             
@@ -198,66 +198,117 @@ document.addEventListener('DOMContentLoaded', function() {
         renderFocusAppList();
     }
     
+    // Utility function to format minutes into H:MM string
+    function formatMinutesToHoursMinutesString(totalMinutes) {
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        return `${hours}:${minutes.toString().padStart(2, '0')}`;
+    }
+
+    // Utility function to format minutes into Xh Ymn string for app list
+    function formatMinutesToAppListString(totalMinutes) {
+        if (totalMinutes === 0) return '0h 00mn';
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
+        return `${hours}h ${minutes.toString().padStart(2, '0')}mn`;
+    }
+
+    // Utility function to generate period-appropriate random time in minutes
+    function getRandomTimeInMinutes(period) {
+        let maxHours;
+        if (period === 'day') {
+            maxHours = 6; // e.g., max 6 hours random time per app for daily view
+        } else if (period === 'week') {
+            maxHours = 30; // e.g., max 30 hours random time per app for weekly view
+        } else { // month
+            maxHours = 100; // e.g., max 100 hours random time per app for monthly view
+        }
+        const hours = Math.random() * maxHours;
+        const minutes = Math.random() * 60;
+        return Math.round(hours * 60 + minutes);
+    }
+
     function updateAppList(period) {
         const appListContainer = document.getElementById('app-list-container');
         appListContainer.innerHTML = '';
         
-        let totalTime = 0;
+        let totalTimeInMinutes = 0; // Work with minutes internally
         const appItems = [];
         
-        // Get app usage data for the selected period
+        // 1. Generate more reasonable random times (in minutes) based on period
         for (const appId in selectedApps) {
             if (selectedApps[appId]) {
-                const timeData = getRandomTimeAndPercentage();
-                const timeValue = timeData[0];
-                const percentage = timeData[1];
-                totalTime += parseInt(timeValue.split('h')[0]) * 60 + parseInt(timeValue.split('h')[1].replace('mn', ''));
+                const timeInMinutes = getRandomTimeInMinutes(period);
+                totalTimeInMinutes += timeInMinutes;
                 
                 appItems.push({
                     appId: appId,
                     name: appData[appId].name,
                     icon: appData[appId].icon,
-                    time: timeValue,
-                    percentage: percentage
+                    timeInMinutes: timeInMinutes, // Store raw minutes initially
                 });
             }
         }
         
-        // Sort apps by usage time (descending)
-        appItems.sort((a, b) => {
-            const timeA = parseInt(a.time.split('h')[0]) * 60 + parseInt(a.time.split('h')[1].replace('mn', ''));
-            const timeB = parseInt(b.time.split('h')[0]) * 60 + parseInt(b.time.split('h')[1].replace('mn', ''));
-            return timeB - timeA;
-        });
+        // Sort apps by generated time initially (descending)
+        appItems.sort((a, b) => b.timeInMinutes - a.timeInMinutes);
         
-        // Update the total time display
-        const hours = Math.floor(totalTime / 60);
-        const minutes = totalTime % 60;
+        // 2. Define period maximums in minutes
+        const dayMaxMinutes = 24 * 60;
+        const weekMaxMinutes = 24 * 7 * 60;
+        const monthMaxMinutes = 24 * 30 * 60; // Use 30 days for month simplicity
+
+        let periodMaximumMinutes;
+        if (period === 'day') {
+            periodMaximumMinutes = dayMaxMinutes;
+        } else if (period === 'week') {
+            periodMaximumMinutes = weekMaxMinutes;
+        } else { // month
+            periodMaximumMinutes = monthMaxMinutes;
+        }
+
+        // 3. Scaling Logic: Scale down individual times if total exceeds maximum
+        let scalingFactor = 1;
+        if (totalTimeInMinutes > periodMaximumMinutes) {
+            scalingFactor = periodMaximumMinutes / totalTimeInMinutes;
+            totalTimeInMinutes = periodMaximumMinutes; // Cap the total to the max
+            console.log(`Scaling app times for ${period}. Factor: ${scalingFactor}`);
+            
+            // Apply scaling to each app item
+            appItems.forEach(item => {
+                item.timeInMinutes = Math.round(item.timeInMinutes * scalingFactor);
+            });
+
+            // Optional: Re-sort after scaling if precise order is critical
+            // appItems.sort((a, b) => b.timeInMinutes - a.timeInMinutes);
+        }
+        // --- END Scaling logic ---
+
+        // 4. Update the total time display using the final totalTimeInMinutes
+        document.getElementById('total-time').textContent = formatMinutesToHoursMinutesString(totalTimeInMinutes);
         
-        // Format with consistent character width and balanced columns
-        let hoursStr = hours.toString(); // No padding to save space
-        let minutesStr = minutes.toString().padStart(2, '0');
-        document.getElementById('total-time').textContent = `${hoursStr}:${minutesStr}`;
-        
-        // Update the circular progress
+        // 5. Update the circular progress (using periodMaximumMinutes as 100% mark)
         const progressRing = document.querySelector('.progress-ring-circle');
-        // Calculate percentage of day spent (assuming 16 waking hours)
-        const maxMinutes = period === 'day' ? 16 * 60 : (period === 'week' ? 16 * 60 * 7 : 16 * 60 * 30);
-        const percentage = Math.min(100, (totalTime / maxMinutes) * 100);
-        const circumference = 2 * Math.PI * 103.5; // Updated to match the new SVG circle radius of 103.5
+        const percentageOfPeriod = periodMaximumMinutes > 0 ? Math.min(100, (totalTimeInMinutes / periodMaximumMinutes) * 100) : 0;
+        const circumference = 2 * Math.PI * 103.5; // Matches the current SVG radius
         progressRing.style.strokeDasharray = circumference;
-        progressRing.style.strokeDashoffset = circumference - (percentage / 100) * circumference;
+        progressRing.style.strokeDashoffset = circumference - (percentageOfPeriod / 100) * circumference;
         
-        // Create and append app items
+        // 6. Create and append app items, formatting time and calculating percentage bar
         appItems.forEach(item => {
-            const appElement = createAppElement(item.appId, item.name, item.icon, item.time, item.percentage);
+            // Calculate percentage for the app item's progress bar (relative to total time)
+            const appPercentage = totalTimeInMinutes > 0 ? Math.min(100, (item.timeInMinutes / totalTimeInMinutes) * 100) : 0;
+            // Format the final time for display in the list
+            const timeFormatted = formatMinutesToAppListString(item.timeInMinutes);
+
+            const appElement = createAppElement(item.appId, item.name, item.icon, timeFormatted, appPercentage);
             appListContainer.appendChild(appElement);
             
             // Add click event to show app details
             appElement.addEventListener('click', () => {
                 showAppDetails(item.appId);
+            });
         });
-    });
 
         // Show a message if no apps are selected
         if (appItems.length === 0) {
