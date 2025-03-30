@@ -402,21 +402,32 @@ document.addEventListener('DOMContentLoaded', function() {
         const focusAppsList = document.getElementById('focus-apps-list');
         focusAppsList.innerHTML = '';
         
-        // Only show app toggles for apps that are currently being tracked
-        for (const appId in selectedApps) {
-            if (selectedApps[appId]) {
+        // Define a fixed list of apps for demonstration purposes
+        const focusDemoApps = ['twitter', 'youtube', 'reddit']; 
+
+        // Create static, disabled toggles for the demo apps
+        focusDemoApps.forEach((appId, index) => {
+            // Make sure the app exists in our main appData
+            if (appData[appId]) { 
                 const template = document.getElementById('app-toggle-template');
                 const toggleElement = template.content.cloneNode(true);
                 
                 toggleElement.querySelector('.app-icon').src = appData[appId].icon;
                 toggleElement.querySelector('.app-icon').alt = appId;
                 toggleElement.querySelector('.toggle-app-name').textContent = appData[appId].name;
-                toggleElement.querySelector('.toggle-checkbox').checked = false; // Default to unchecked for focus mode
-                toggleElement.querySelector('.toggle-checkbox').id = `${appId}-focus-toggle`;
+                
+                const checkbox = toggleElement.querySelector('.toggle-checkbox');
+                // Set first two apps as 'checked' visually
+                checkbox.checked = (index < 2); 
+                // Disable the checkbox interaction
+                checkbox.disabled = true; 
+                checkbox.id = `${appId}-focus-toggle`; // Keep ID for potential styling
+                
+                // No event listener needed as it's disabled
                 
                 focusAppsList.appendChild(toggleElement);
             }
-        }
+        });
     }
     
     function renderStatisticsPage() {

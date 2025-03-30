@@ -162,6 +162,7 @@ body, html {
 
 /* Page Styles */
 .page {
+    position: relative;
     display: none;
     flex-direction: column;
     padding: 10px 10px 20px 10px; /* Add more bottom padding */
@@ -763,4 +764,35 @@ input:checked + .slider:before {
 /* Add smooth scrolling to the entire document */
 html {
     scroll-behavior: smooth;
+}
+
+/* Coming Soon Overlay */
+.coming-soon-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(240, 240, 240, 0.85); /* Light background with opacity */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 10; /* Ensure it's above page content */
+    border-radius: inherit; /* Inherit parent page rounding if any */
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.coming-soon-overlay .material-icons {
+    font-size: 48px;
+    color: var(--dark-gray);
+    margin-bottom: 16px;
+}
+
+.coming-soon-overlay p {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--dark-gray);
 }
