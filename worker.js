@@ -1,6 +1,62 @@
+// Global variables for active tracking
+let currentActiveAppId = null;
+let currentActiveStartTime = null;
+let trackedApps = {}; // Stores the { appId: boolean } from storage
 
+// Function to load tracked apps from storage
+async function loadTrackedApps() {
+    try {
+        const data = await chrome.storage.local.get(['checkPersist']);
+        // Use default if 'checkPersist' doesn't exist yet
+        trackedApps = data.checkPersist || {
+            "netflix": true,
+            "youtube": true,
+            "twitter": false,
+            "facebook": false,
+            "instagram": false,
+            "pinterest": false,
+            "reddit": false,
+            "quora": false,
+            "amazon": false,
+            "spotify": false,
+            "tumblr": false,
+            "linkedin": false,
+            "slack": false,
+            "medium": false,
+            "twitch": false,
+            "discord": false,
+            "stack": false,
+            "leetcode": false,
+        };
+        console.log("Tracked apps loaded:", trackedApps);
+    } catch (error) {
+        console.error("Error loading tracked apps:", error);
+        // Use default in case of error
+        trackedApps = { "netflix": true, "youtube": true }; 
+    }
+}
+
+// Utility functions
+
+function getCurrentWeek() {
+    const currentDate = new Date();
+    const startDate = new Date(currentDate.getFullYear(), 0, 1);
+    const days = Math.floor((currentDate - startDate) / (24 * 60 * 60 * 1000));
+    // Calculate ISO week number
+    const dayNum = currentDate.getDay() || 7; // Make Sunday 7
+    startDate.setDate(startDate.getDate() + 4 - (startDate.getDay() || 7));
+    const yearStart = startDate.getTime();
+    const weekNo = Math.ceil((((currentDate.getTime() - yearStart) / 86400000) + 1) / 7);
+    return `${currentDate.getFullYear()}-W${String(weekNo).padStart(2, '0')}`;
+}
+
+function getCurrentDay() {
+    const currentDate = new Date();
+    return currentDate.toISOString().split('T')[0]; // YYYY-MM-DD
+}
+
+// Function to check URL and return appId (keep existing)
 function checkCurrentTabUrl(url) {
-
     const regNetflix = /netflix/i
     const regYoutube = /youtube/i
     const regQuora = /quora/i
@@ -38,244 +94,288 @@ function checkCurrentTabUrl(url) {
         "discord", "stackoverflow", "twitch"
     ]
 
-    for (let key = 0; key < regExStore.length; key++) {
-        let searchFlag = regExStore[key].test(url);
-        if (searchFlag) {
-            return regExUrlMatcher[key];
-        } 
+    if (!url) return null; // Handle cases where URL might be undefined
+
+    try {
+        // Use URL constructor for more robust parsing if possible
+        const hostname = new URL(url).hostname;
+        for (let key = 0; key < regExStore.length; key++) {
+            // Test against hostname for better accuracy
+            if (regExStore[key].test(hostname)) {
+                return regExUrlMatcher[key];
+            } 
+        }
+    } catch (e) {
+        // Fallback to simple regex test if URL parsing fails (e.g., for non-http URLs)
+         for (let key = 0; key < regExStore.length; key++) {
+            if (regExStore[key].test(url)) {
+                return regExUrlMatcher[key];
+            }
+        }
     }
 
     return null;
-
 }
 
-
-function printing () {
-    console.log("background workin printing");
-    return
-}
-
-  
-// worker.js
-
-// Utility functions
-
-function millisecondsToMinutesFormatted(milliseconds, decimalPlaces = 2) {
-    return (milliseconds / 60000).toFixed(decimalPlaces);
-}
-
-function getCurrentWeek() {
-    const currentDate = new Date();
-    const startDate = new Date(currentDate.getFullYear(), 0, 1);
-    const days = Math.floor((currentDate - startDate) / (24 * 60 * 60 * 1000));
-    const weekNumber = Math.ceil(days / 7);
-    return `${currentDate.getFullYear()}-W${weekNumber}`;
-}
-
-function getCurrentDay() {
-    const currentDate = new Date();
-    return currentDate.toISOString().split('T')[0];
-}
-
-
-// Global variables
-let tabTimes = {};
-let currentActiveUrl = null;
-let timerId = null;
-let lastUpdated = Date.now();
-
-// Ensuring that tabTimes[url] is initialized
-function ensureTabInitialization(url) {
-    if (!tabTimes[url]) {
-        tabTimes[url] = {
-            startTime: Date.now(),
-            totalTime: 0,
-            name: checkCurrentTabUrl(url)
-        };
+// NEW: Centralized function to add time to storage
+async function addTimeToStorage(appId, durationMinutes) {
+    if (!appId || durationMinutes <= 0) {
+        // console.log("Skipping storage update: No appId or duration <= 0");
+        return; // Don't save if no app or no time passed
     }
-}
 
-// Function to update time spent on a tab
-function updateTimeSpent(URL, updateStorage = false) {
-    let url = checkCurrentTabUrl(URL);
-    if (tabTimes[url] && tabTimes[url].startTime) {
-        const now = Date.now();
-        const duration = now - tabTimes[url].startTime;
-        tabTimes[url].totalTime += Math.round(duration / 60000); // Store total time in minutes
-        tabTimes[url].startTime = now;
-        let mins = millisecondsToMinutesFormatted(duration);
-        tabTimes[url].minutes = mins;
-        console.log(`URL ${url} was active for ${mins} minutes in ${getCurrentWeek()} - ${getCurrentDay()}.`);
-        if (updateStorage) {
-            let str = JSON.stringify({
-                [getCurrentWeek()]: {
-                    [getCurrentDay()]: {
-                        [url]: tabTimes[url]
-                    }
-                }
-            });
-            console.log(`TabTimes => ${str}`);
-            // Uncomment the line below to save to Chrome storage
-            chrome.storage.local.set({tabTimes: tabTimes}, () => {
-                console.log('Tab times updated in storage');
-            });
-        }
-    }
-}
+    const currentWeek = getCurrentWeek(); // YYYY-Www
+    const currentDay = getCurrentDay();   // YYYY-MM-DD
+    const durationMs = durationMinutes * 60 * 1000; // Store duration in ms for potential future precision
 
-function updateTabData(URL, tabName, duration) {
-    let url = checkCurrentTabUrl(URL);
+    try {
+        const result = await chrome.storage.local.get(['screenTimeData']);
+        const data = result.screenTimeData || {}; // Initialize if not present
 
-    const currentWeek = getCurrentWeek();
-    const currentDay = getCurrentDay();
-
-    chrome.storage.local.get(['screenTimeData'], (result) => {
-        const data = result.screenTimeData || {};
+        // Ensure week object exists
         if (!data[currentWeek]) {
             data[currentWeek] = {};
         }
+        // Ensure day object exists
         if (!data[currentWeek][currentDay]) {
             data[currentWeek][currentDay] = {};
         }
-        if (!data[currentWeek][currentDay][url]) {
-            data[currentWeek][currentDay][url] = {
-                name: tabName,
-                timeSpent: 0
+        // Ensure app object exists
+        if (!data[currentWeek][currentDay][appId]) {
+            // Get app name from popup data (assuming popup.js structure)
+            // This part is slightly less ideal as worker shouldn't know popup specifics
+            // Better: Pass appName along or have a shared app constant
+            const appName = appId.charAt(0).toUpperCase() + appId.slice(1); // Simple capitalization
+            data[currentWeek][currentDay][appId] = {
+                name: appName, 
+                timeSpentMs: 0 // Store time in Milliseconds
             };
         }
-        data[currentWeek][currentDay][url].timeSpent += duration;
 
-        // Uncomment the line below to save to Chrome storage
-        chrome.storage.local.set({screenTimeData: data}, () => {
-            console.log(`Updated screen time data for ${currentWeek}: ${JSON.stringify({
-                [currentWeek]: {
-                    [currentDay]: {
-                        [url]: data[currentWeek][currentDay][url]
-                    }
-                }
-            }, null, 2)}`);        });
-    });
+        // Increment time spent
+        data[currentWeek][currentDay][appId].timeSpentMs += durationMs;
+
+        // --- Debug Log ---
+        console.log(`[addTimeToStorage] Saving data for ${appId}. New total Ms: ${data[currentWeek][currentDay][appId].timeSpentMs}. Data object:`, JSON.parse(JSON.stringify(data))); // Log before saving
+        // --- End Debug Log ---
+
+        // Save updated data
+        await chrome.storage.local.set({ screenTimeData: data });
+        // console.log(`Updated ${appId} on ${currentDay}: added ${durationMinutes.toFixed(2)}m. New total: ${(data[currentWeek][currentDay][appId].timeSpentMs / 60000).toFixed(2)}m`);
+
+    } catch (error) {
+        console.error("Error updating screen time data:", error);
+    }
 }
 
-// Helper function to determine if the URL is accessible by the extension
+// NEW: Function to stop the current timer and save the time
+async function stopCurrentTimer() {
+    if (currentActiveAppId && currentActiveStartTime) {
+        const endTime = Date.now();
+        const durationMs = endTime - currentActiveStartTime;
+        const durationMinutes = durationMs / 60000; // Convert ms to minutes
+
+        // console.log(`Stopping timer for ${currentActiveAppId}. Duration: ${durationMinutes.toFixed(2)}m`);
+        await addTimeToStorage(currentActiveAppId, durationMinutes); // Use await here
+
+        // Reset active state ONLY AFTER saving
+        currentActiveAppId = null;
+        currentActiveStartTime = null;
+    } else {
+        // console.log("Stop timer called, but nothing active.");
+    }
+}
+
+// NEW: Function to start timer for a specific app
+async function startTimerForApp(appId) {
+    // Stop any existing timer first
+    await stopCurrentTimer();
+
+    // --- Debug Log ---
+    console.log(`[startTimerForApp] Received appId: ${appId}`);
+    const isTracked = appId && trackedApps[appId];
+    console.log(`[startTimerForApp] Is app tracked? ${isTracked}`);
+    // --- End Debug Log ---
+
+    // Check if the app ID is valid and if it's selected for tracking
+    if (isTracked) { 
+        console.log(`[startTimerForApp] Starting timer for tracked app: ${appId}`); // Log start
+        currentActiveAppId = appId;
+        currentActiveStartTime = Date.now();
+    } else {
+        console.log(`[startTimerForApp] App not tracked or invalid ID: ${appId}. No timer started.`); // Log no start
+        // Ensure state is reset if app isn't tracked
+        currentActiveAppId = null;
+        currentActiveStartTime = null;
+    }
+}
+
+// --- Worker Initialization ---
+console.log("Service worker started/reloaded.");
+
+// Load tracked apps on startup
+loadTrackedApps();
+
+// --- Setup Alarm for Periodic Saving ---
+const ALARM_NAME = 'minuteSave';
+
+chrome.alarms.get(ALARM_NAME, (alarm) => {
+    if (!alarm) { // Create alarm if it doesn't exist
+        chrome.alarms.create(ALARM_NAME, { periodInMinutes: 1 });
+        console.log("Created periodic save alarm:", ALARM_NAME);
+    }
+});
+
+chrome.alarms.onAlarm.addListener(async (alarm) => {
+    if (alarm.name === ALARM_NAME) {
+        // --- Debug Log ---
+        console.log(`[Alarm triggered] Name: ${alarm.name}, Current App: ${currentActiveAppId}, StartTime: ${currentActiveStartTime}`);
+        // --- End Debug Log ---
+
+        if (currentActiveAppId && currentActiveStartTime) {
+            // Timer is running, save the elapsed time chunk
+            const now = Date.now();
+            const durationMs = now - currentActiveStartTime;
+            const durationMinutes = durationMs / 60000;
+
+            // --- Debug Log ---
+            console.log(`[Alarm] About to call addTimeToStorage for ${currentActiveAppId} with duration ${durationMinutes.toFixed(2)}m`);
+            // --- End Debug Log ---
+
+            await addTimeToStorage(currentActiveAppId, durationMinutes);
+            
+            // IMPORTANT: Reset start time to now to continue timing the current app
+            currentActiveStartTime = now; 
+        } else {
+            console.log("[Alarm] No active app timer running."); // Log if no timer
+        }
+    }
+});
+
+// --- NEW Event Listeners ---
+
+// Tab Activated: User switches to a different tab
+chrome.tabs.onActivated.addListener(async (activeInfo) => {
+    try {
+        const tab = await chrome.tabs.get(activeInfo.tabId);
+        if (tab && canAccessUrl(tab.url)) {
+            const appId = checkCurrentTabUrl(tab.url);
+            // console.log(`Tab Activated: ${tab.url}, AppId: ${appId}`);
+            await startTimerForApp(appId);
+        } else {
+            // console.log(`Tab Activated: Cannot access URL or tab not found.`);
+            await stopCurrentTimer(); // Stop timer if we switch to an inaccessible tab
+        }
+    } catch (error) {
+        console.error("Error in tabs.onActivated:", error);
+        await stopCurrentTimer(); // Stop timer on error
+    }
+});
+
+// Tab Updated: URL changes in a tab
+chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
+    // Check if the URL changed and the tab is active
+    if (changeInfo.url && tab.active && canAccessUrl(tab.url)) {
+        const appId = checkCurrentTabUrl(tab.url);
+        // console.log(`Tab Updated: ${tab.url}, AppId: ${appId}`);
+        await startTimerForApp(appId);
+    } else if (changeInfo.url && tab.active && !canAccessUrl(tab.url)) {
+        // console.log(`Tab Updated: Switched to inaccessible URL`);
+        await stopCurrentTimer();
+    }
+});
+
+// Window Focus Changed: User switches windows or minimizes/restores
+chrome.windows.onFocusChanged.addListener(async (windowId) => {
+    if (windowId === chrome.windows.WINDOW_ID_NONE) {
+        // console.log("Window lost focus");
+        await stopCurrentTimer();
+    } else {
+        // console.log("Window gained focus");
+        try {
+            // Check the active tab in the newly focused window
+            const [activeTab] = await chrome.tabs.query({ active: true, windowId: windowId });
+            if (activeTab && canAccessUrl(activeTab.url)) {
+                const appId = checkCurrentTabUrl(activeTab.url);
+                // console.log(`Focused window tab: ${activeTab.url}, AppId: ${appId}`);
+                await startTimerForApp(appId);
+            } else {
+                 // console.log(`Focused window tab inaccessible or not found.`);
+                await stopCurrentTimer(); // Stop if focused tab is not trackable
+            }
+        } catch (error) {
+            console.error("Error in windows.onFocusChanged:", error);
+            await stopCurrentTimer();
+        }
+    }
+});
+
+// Tab Removed: User closes a tab
+// We don't necessarily need to do anything special here, 
+// as onActivated or onFocusChanged will handle stopping the timer 
+// when the user switches to a different tab/window after closing.
+// chrome.tabs.onRemoved.addListener(async (tabId, removeInfo) => {
+//     console.log("Tab removed:", tabId);
+//     // Optional: Could check if removeInfo.windowId still exists 
+//     // and if the active tab is now different, but likely redundant.
+// });
+
+// --- Listener for Settings Changes from Popup ---
+chrome.runtime.onMessage.addListener(async (message, sender, sendResponse) => {
+    if (message.type === 'settingsUpdated') {
+        console.log("Received settings update message from popup.");
+        await loadTrackedApps(); // Reload the tracked apps list
+        
+        // Re-evaluate the current tab after settings change
+        try {
+            const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+            if (activeTab && canAccessUrl(activeTab.url)) {
+                const appId = checkCurrentTabUrl(activeTab.url);
+                // console.log(`Re-evaluating current tab after settings update: ${activeTab.url}, AppId: ${appId}`);
+                await startTimerForApp(appId); // Restart timer based on new settings
+            } else {
+                await stopCurrentTimer();
+            }
+        } catch (error) {
+             console.error("Error re-evaluating tab after settings update:", error);
+             await stopCurrentTimer();
+        }
+    }
+});
+
+// Keep helper function for URL accessibility check
 function canAccessUrl(url) {
+    // Add check for undefined/null URL
+    if (!url) return false; 
     return !url.startsWith('chrome://') && !url.startsWith('chrome-extension://');
 }
 
-console.log("Service worker loaded");
 
-chrome.tabs.onActivated.addListener(activeInfo => {
-    // activeInfo.tabId contains the ID of the tab that became active
-    // activeInfo.windowId contains the ID of the window the active tab is in
-    console.log(`Activated Tab ID: ${activeInfo.tabId}`);
+// --- REMOVE OLD/REDUNDANT CODE BELOW --- 
+/* 
+// Remove old global variables like tabTimes, timerId, lastUpdated
+let tabTimes = {}; 
+let timerId = null;
+let lastUpdated = Date.now();
 
-    // Optionally, get more details about the tab
-    chrome.tabs.get(activeInfo.tabId, (tab) => {
-        // Ensure the tab's URL is accessible (i.e., it's not a restricted URL)
-        if (tab.url && canAccessUrl(tab.url)) {
-            // const tabUrl = new URL(tab.url).hostname;
-            const tabUrl = checkCurrentTabUrl(tab.url);
-            const tabName = checkCurrentTabUrl(tab.url);
-            console.log(`Tab activated: ${tabName}`);
+// Remove old initialization function
+function ensureTabInitialization(url) { ... }
 
-            if (tabName) {
-                if (currentActiveUrl !== null) {
-                    updateTimeSpent(currentActiveUrl, true);
-                }
-                currentActiveUrl = tabUrl;
-                ensureTabInitialization(currentActiveUrl);
-                tabTimes[currentActiveUrl].url = tabName;
-                if (timerId !== null) {
-                    clearInterval(timerId);
-                }
-                timerId = setInterval(() => {
-                    if (currentActiveUrl !== null) {
-                        updateTimeSpent(currentActiveUrl, true);
-                    }
-                }, 120000); // Update every 2 minutes
-            } else {
-                if (currentActiveUrl !== null) {
-                    clearInterval(timerId);
-                }
-            }
-        }
-    });
-});
+// Remove old time update function
+function updateTimeSpent(URL, updateStorage = false) { ... }
 
-chrome.windows.onFocusChanged.addListener((windowId) => {
-    if (windowId === chrome.windows.WINDOW_ID_NONE) {
-        // Browser window has lost focus
-        if (currentActiveUrl !== null) {
-            updateTimeSpent(currentActiveUrl, true);
-            clearInterval(timerId);
-        }
-    } else {
-        // Browser window has gained focus, update the start time for the current tab
-        if (currentActiveUrl !== null) {
-            tabTimes[currentActiveUrl].startTime = Date.now();
-        }
-    }
-});
+// Remove old updateTabData function
+function updateTabData(URL, tabName, duration) { ... }
 
-chrome.tabs.onRemoved.addListener(tabId => {
-    if (tabTimes[tabId]) {
-        updateTimeSpent(tabId, true);
-        // delete tabTimes[tabId];
-        console.log(`Tab times updated in storage after tab ${tabId} close for URL ${url} in ${getCurrentWeek()} - ${getCurrentDay()}.`);    }
-});
+// Remove old event listeners that use the old logic
+chrome.tabs.onActivated.addListener(activeInfo => { ... OLD LOGIC ... });
+chrome.windows.onFocusChanged.addListener((windowId) => { ... OLD LOGIC ... });
+chrome.tabs.onRemoved.addListener(tabId => { ... OLD LOGIC ... });
 
-timerId = setInterval(() => {
-    if (currentActiveUrl !== null) {
-        updateTimeSpent(currentActiveUrl, true);
-    }
-}, 120000); // Update every 2 minutes
+// Remove old setInterval logic
+timerId = setInterval(() => { ... }, 120000);
 
-// Function to handle day change
-function handleDayChange() {
-    const currentDay = getCurrentDay();
-    const currentWeek = getCurrentWeek();
-
-    chrome.storage.local.get(['screenTimeData'], (result) => {
-        const data = result.screenTimeData || {};
-        const lastUpdatedDay = new Date(lastUpdated).toISOString().split('T')[0];
-
-        if (lastUpdatedDay !== currentDay) {
-            // Calculate the difference in days
-            const lastDate = new Date(lastUpdatedDay);
-            const currentDate = new Date(currentDay);
-            const dayDifference = Math.floor((currentDate - lastDate) / (1000 * 60 * 60 * 24));
-
-            // Handle the interval between the days
-            for (let i = 1; i <= dayDifference; i++) {
-                const missingDay = new Date(lastDate);
-                missingDay.setDate(missingDay.getDate() + i);
-                const missingDayString = missingDay.toISOString().split('T')[0];
-                if (!data[currentWeek]) {
-                    data[currentWeek] = {};
-                }
-                if (!data[currentWeek][missingDayString]) {
-                    data[currentWeek][missingDayString] = {};
-                }
-                Object.keys(tabTimes).forEach(url => {
-                    if (!data[currentWeek][missingDayString][url]) {
-                        data[currentWeek][missingDayString][url] = {
-                            name: tabTimes[url].name,
-                            timeSpent: 0
-                        };
-                    }
-                });
-            }
-
-            lastUpdated = Date.now();
-            // Uncomment the line below to save to Chrome storage
-            // chrome.storage.local.set({screenTimeData: data}, () => {
-            //     console.log('Handled day change and updated data');
-            // });
-            console.log(`Handled day change and updated data for ${currentWeek}: ${JSON.stringify({
-                [currentWeek]: data[currentWeek]
-            }, null, 2)}`);        }
-    });
-}
-
-// Call handleDayChange periodically
-setInterval(handleDayChange, 60000); // Check for day
+// Remove old handleDayChange logic if not needed (storage structure handles days)
+function handleDayChange() { ... }
+setInterval(handleDayChange, 60000); 
+*/

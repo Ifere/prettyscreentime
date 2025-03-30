@@ -43,8 +43,8 @@
       "tabs",
       "scripting",
       "activeTab",
-      "webNavigation"
-
+      "webNavigation",
+      "alarms"
 
     ],
 

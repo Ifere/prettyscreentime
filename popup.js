@@ -218,139 +218,195 @@ document.addEventListener('DOMContentLoaded', function() {
         return `${hours}h ${minutes.toString().padStart(2, '0')}mn`;
     }
 
-    // Utility function to generate period-appropriate random time in minutes
-    function getRandomTimeInMinutes(period) {
-        let maxHours;
-        if (period === 'day') {
-            maxHours = 6; // e.g., max 6 hours random time per app for daily view
-        } else if (period === 'week') {
-            maxHours = 30; // e.g., max 30 hours random time per app for weekly view
-        } else { // month
-            maxHours = 100; // e.g., max 100 hours random time per app for monthly view
-        }
-        const hours = Math.random() * maxHours;
-        const minutes = Math.random() * 60;
-        return Math.round(hours * 60 + minutes);
+    // Utility functions for date calculations
+    function getCurrentWeekKey() {
+        const currentDate = new Date();
+        const startDate = new Date(currentDate.getFullYear(), 0, 1);
+        const dayNum = currentDate.getDay() || 7;
+        startDate.setDate(startDate.getDate() + 4 - (startDate.getDay() || 7));
+        const yearStart = startDate.getTime();
+        const weekNo = Math.ceil((((currentDate.getTime() - yearStart) / 86400000) + 1) / 7);
+        return `${currentDate.getFullYear()}-W${String(weekNo).padStart(2, '0')}`;
+    }
+    function getDayKey(date) {
+        return date.toISOString().split('T')[0];
+    }
+    function getWeekKey(date) {
+        const startDate = new Date(date.getFullYear(), 0, 1);
+        const dayNum = date.getDay() || 7;
+        startDate.setDate(startDate.getDate() + 4 - (date.getDay() || 7));
+        const yearStart = startDate.getTime();
+        const weekNo = Math.ceil((((date.getTime() - yearStart) / 86400000) + 1) / 7);
+        return `${date.getFullYear()}-W${String(weekNo).padStart(2, '0')}`;
     }
 
-    function updateAppList(period) {
+    async function updateAppList(period) {
         const appListContainer = document.getElementById('app-list-container');
-        appListContainer.innerHTML = '';
+        appListContainer.innerHTML = ''; // Clear previous list
         
-        let totalTimeInMinutes = 0; // Work with minutes internally
-        const appItems = [];
-        
-        // 1. Generate more reasonable random times (in minutes) based on period
-        for (const appId in selectedApps) {
-            if (selectedApps[appId]) {
-                const timeInMinutes = getRandomTimeInMinutes(period);
-                totalTimeInMinutes += timeInMinutes;
-                
-                appItems.push({
-                    appId: appId,
-                    name: appData[appId].name,
-                    icon: appData[appId].icon,
-                    timeInMinutes: timeInMinutes, // Store raw minutes initially
-                });
+        try {
+            const result = await chrome.storage.local.get(['screenTimeData', 'checkPersist']);
+            const screenTimeData = result.screenTimeData || {};
+            const currentSelectedApps = result.checkPersist || selectedApps; // Use stored or default
+
+            let totalTimeInMinutes = 0;
+            const appTotals = {}; // { appId: totalMinutesForPeriod }
+
+            const today = new Date();
+            const todayKey = getDayKey(today);
+            const currentWeekKey = getCurrentWeekKey();
+
+            // --- Data Aggregation --- 
+            if (period === 'day') {
+                const weekData = screenTimeData[currentWeekKey] || {};
+                const dayData = weekData[todayKey] || {};
+                for (const appId in dayData) {
+                    if (currentSelectedApps[appId]) { // Only include selected apps
+                        const timeMs = dayData[appId].timeSpentMs || 0;
+                        const timeMinutes = Math.round(timeMs / 60000);
+                        appTotals[appId] = (appTotals[appId] || 0) + timeMinutes;
+                        totalTimeInMinutes += timeMinutes;
+                    }
+                }
+            } else if (period === 'week') {
+                const weekData = screenTimeData[currentWeekKey] || {};
+                for (const dayKey in weekData) {
+                    const dayData = weekData[dayKey] || {};
+                    for (const appId in dayData) {
+                        if (currentSelectedApps[appId]) {
+                            const timeMs = dayData[appId].timeSpentMs || 0;
+                            const timeMinutes = Math.round(timeMs / 60000);
+                            appTotals[appId] = (appTotals[appId] || 0) + timeMinutes;
+                            totalTimeInMinutes += timeMinutes;
+                        }
+                    }
+                }
+            } else { // month (approx last 30 days for simplicity)
+                for (let i = 0; i < 30; i++) {
+                    const date = new Date(today);
+                    date.setDate(today.getDate() - i);
+                    const dayKey = getDayKey(date);
+                    const weekKey = getWeekKey(date);
+
+                    const weekData = screenTimeData[weekKey] || {};
+                    const dayData = weekData[dayKey] || {};
+                    for (const appId in dayData) {
+                        if (currentSelectedApps[appId]) {
+                            const timeMs = dayData[appId].timeSpentMs || 0;
+                            const timeMinutes = Math.round(timeMs / 60000);
+                            appTotals[appId] = (appTotals[appId] || 0) + timeMinutes;
+                            // Add to total only once per app per day if logic requires
+                            // This simple sum might overestimate if month includes partial days from week view
+                            // For now, summing directly for simplicity:
+                            if (i === 0) totalTimeInMinutes += timeMinutes; // Simplistic total for demo
+                        }
+                    }
+                }
+                 // Recalculate total for month based on appTotals for accuracy
+                 totalTimeInMinutes = Object.values(appTotals).reduce((sum, time) => sum + time, 0);
             }
-        }
-        
-        // Sort apps by generated time initially (descending)
-        appItems.sort((a, b) => b.timeInMinutes - a.timeInMinutes);
-        
-        // 2. Define period maximums in minutes
-        const dayMaxMinutes = 24 * 60;
-        const weekMaxMinutes = 24 * 7 * 60;
-        const monthMaxMinutes = 24 * 30 * 60; // Use 30 days for month simplicity
+            // --- End Data Aggregation ---
 
-        let periodMaximumMinutes;
-        if (period === 'day') {
-            periodMaximumMinutes = dayMaxMinutes;
-        } else if (period === 'week') {
-            periodMaximumMinutes = weekMaxMinutes;
-        } else { // month
-            periodMaximumMinutes = monthMaxMinutes;
-        }
+            // ---> Ensure all selected apps are present in appTotals (with 0 time if needed)
+            for (const appId in currentSelectedApps) {
+                if (currentSelectedApps[appId] && !(appId in appTotals)) {
+                    appTotals[appId] = 0; // Add selected apps with 0 time if not found in tracked data
+                }
+            }
+            // --- End Ensure selected apps ---
 
-        // 3. Scaling Logic: Scale down individual times if total exceeds maximum
-        let scalingFactor = 1;
-        if (totalTimeInMinutes > periodMaximumMinutes) {
-            scalingFactor = periodMaximumMinutes / totalTimeInMinutes;
-            totalTimeInMinutes = periodMaximumMinutes; // Cap the total to the max
-            console.log(`Scaling app times for ${period}. Factor: ${scalingFactor}`);
+            // Sort aggregated app data
+            const sortedAppItems = Object.entries(appTotals)
+                .map(([appId, timeInMinutes]) => ({ 
+                    appId, 
+                    timeInMinutes,
+                    name: appData[appId]?.name || appId, // Get name from appData
+                    icon: appData[appId]?.icon || 'assets/images/icons/default.png' // Get icon
+                }))
+                .sort((a, b) => b.timeInMinutes - a.timeInMinutes);
+
+            // 4. Update the total time display
+            document.getElementById('total-time').textContent = formatMinutesToHoursMinutesString(totalTimeInMinutes);
             
-            // Apply scaling to each app item
-            appItems.forEach(item => {
-                item.timeInMinutes = Math.round(item.timeInMinutes * scalingFactor);
+            // ---> Update Time Period Label (Keep existing logic) <---
+            const timePeriodLabel = document.getElementById('time-period-label');
+            const now = new Date();
+            let labelText = '';
+            if (period === 'day') {
+                const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                labelText = daysOfWeek[now.getDay()];
+            } else if (period === 'week') {
+                 const dayOfMonth = now.getDate();
+                const weekOfMonth = Math.ceil(dayOfMonth / 7);
+                const monthsOfYear = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                const currMonth = monthsOfYear[now.getMonth()]
+                const monthsWithLessThan31Days = ["February", "April", "June", "September", "November"];
+                let suffix = 'th';
+                if (weekOfMonth === 1) suffix = 'st';
+                else if (weekOfMonth === 2) suffix = 'nd';
+                else if (weekOfMonth === 3) suffix = 'rd';
+                // Corrected logic for week label
+                const dayOfWeek = now.getDay(); // 0=Sun, 6=Sat
+                const startOfWeek = new Date(now);
+                startOfWeek.setDate(now.getDate() - dayOfWeek);
+                const endOfWeek = new Date(startOfWeek);
+                endOfWeek.setDate(startOfWeek.getDate() + 6);
+                labelText = `Week of ${startOfWeek.getDate()}${getOrdinalSuffix(startOfWeek.getDate())}`;
+            } else { // month
+                const monthsOfYear = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                labelText = monthsOfYear[now.getMonth()];
+            }
+            timePeriodLabel.textContent = labelText;
+            // ---> END: Update Time Period Label <---
+
+            // 5. Update the circular progress
+            const progressRing = document.querySelector('.progress-ring-circle');
+            const dayMaxMinutes = 24 * 60;
+            const weekMaxMinutes = 24 * 7 * 60;
+            const monthMaxMinutes = 24 * 30 * 60; // Using 30 for consistency
+            let periodMaximumMinutes = dayMaxMinutes;
+             if (period === 'week') periodMaximumMinutes = weekMaxMinutes;
+            else if (period === 'month') periodMaximumMinutes = monthMaxMinutes;
+            
+            const percentageOfPeriod = periodMaximumMinutes > 0 ? Math.min(100, (totalTimeInMinutes / periodMaximumMinutes) * 100) : 0;
+            const circumference = 2 * Math.PI * 103.5; 
+            progressRing.style.strokeDasharray = circumference;
+            progressRing.style.strokeDashoffset = circumference - (percentageOfPeriod / 100) * circumference;
+            
+            // 6. Create and append app items
+            sortedAppItems.forEach(item => {
+                const appPercentage = totalTimeInMinutes > 0 ? Math.min(100, (item.timeInMinutes / totalTimeInMinutes) * 100) : 0;
+                const timeFormatted = formatMinutesToAppListString(item.timeInMinutes);
+                const appElement = createAppElement(item.appId, item.name, item.icon, timeFormatted, appPercentage);
+                appListContainer.appendChild(appElement);
             });
 
-            // Optional: Re-sort after scaling if precise order is critical
-            // appItems.sort((a, b) => b.timeInMinutes - a.timeInMinutes);
-        }
-        // --- END Scaling logic ---
+            // Show empty message if needed
+            if (sortedAppItems.length === 0) {
+                const emptyMessage = document.createElement('div');
+                emptyMessage.className = 'empty-message';
+                emptyMessage.innerHTML = `
+                    <p>No time tracked for selected apps yet.</p>
+                    <p>Browse some tracked websites!</p>
+                `;
+                emptyMessage.style.textAlign = 'center';
+                emptyMessage.style.color = 'var(--dark-gray)';
+                emptyMessage.style.padding = '40px 20px';
+                appListContainer.appendChild(emptyMessage);
+            }
 
-        // 4. Update the total time display using the final totalTimeInMinutes
-        document.getElementById('total-time').textContent = formatMinutesToHoursMinutesString(totalTimeInMinutes);
-        
-        // ---> START: Update Time Period Label <---
-        const timePeriodLabel = document.getElementById('time-period-label');
-        const now = new Date();
-        let labelText = '';
-
-        if (period === 'day') {
-            const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            labelText = daysOfWeek[now.getDay()];
-        } else if (period === 'week') {
-            const dayOfMonth = now.getDate();
-            const weekOfMonth = Math.ceil(dayOfMonth / 7);
-            const monthsOfYear = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-            const currMonth = monthsOfYear[now.getMonth()]
-            const monthsWithLessThan31Days = ["February", "April", "June", "September", "November"];
-            let suffix = 'th';
-            if (weekOfMonth === 1) suffix = 'st';
-            else if (weekOfMonth === 2) suffix = 'nd';
-            else if (weekOfMonth === 3) suffix = 'rd';
-            labelText = (dayOfMonth > 21 && monthsWithLessThan31Days.includes(currMonth)) ? `${weekOfMonth}${suffix} Week` : 'Last Week';
-        } else { // month
-            const monthsOfYear = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-            labelText = monthsOfYear[now.getMonth()];
-        }
-        timePeriodLabel.textContent = labelText;
-        // ---> END: Update Time Period Label <---
-
-        // 5. Update the circular progress (using periodMaximumMinutes as 100% mark)
-        const progressRing = document.querySelector('.progress-ring-circle');
-        const percentageOfPeriod = periodMaximumMinutes > 0 ? Math.min(100, (totalTimeInMinutes / periodMaximumMinutes) * 100) : 0;
-        const circumference = 2 * Math.PI * 103.5; // Matches the current SVG radius
-        progressRing.style.strokeDasharray = circumference;
-        progressRing.style.strokeDashoffset = circumference - (percentageOfPeriod / 100) * circumference;
-        
-        // 6. Create and append app items, formatting time and calculating percentage bar
-        appItems.forEach(item => {
-            // Calculate percentage for the app item's progress bar (relative to total time)
-            const appPercentage = totalTimeInMinutes > 0 ? Math.min(100, (item.timeInMinutes / totalTimeInMinutes) * 100) : 0;
-            // Format the final time for display in the list
-            const timeFormatted = formatMinutesToAppListString(item.timeInMinutes);
-
-            const appElement = createAppElement(item.appId, item.name, item.icon, timeFormatted, appPercentage);
-            appListContainer.appendChild(appElement);
-        });
-
-        // Show a message if no apps are selected
-        if (appItems.length === 0) {
-            const emptyMessage = document.createElement('div');
-            emptyMessage.className = 'empty-message';
-            emptyMessage.innerHTML = `
-                <p>No apps selected for tracking.</p>
-                <p>Go to Settings to select apps you want to monitor.</p>
-            `;
-            emptyMessage.style.textAlign = 'center';
-            emptyMessage.style.color = 'var(--dark-gray)';
-            emptyMessage.style.padding = '40px 20px';
-            appListContainer.appendChild(emptyMessage);
+        } catch (error) {
+            console.error("Error updating app list:", error);
+            appListContainer.innerHTML = '<p style="color: red; text-align: center; padding: 20px;">Error loading data.</p>';
         }
     }
-    
+
+    // Helper for ordinal suffix (1st, 2nd, 3rd, th)
+    function getOrdinalSuffix(n) {
+        const s = ["th", "st", "nd", "rd"], v = n % 100;
+        return (s[(v - 20) % 10] || s[v] || s[0]);
+    }
+
     function createAppElement(appId, name, icon, time, percentage) {
         const template = document.getElementById('app-item-template');
         const appElement = template.content.cloneNode(true);
@@ -387,7 +443,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 chrome.storage.local.set({ "checkPersist": selectedApps }, function() {
                     console.log("App selection saved:", selectedApps);
                     
-                    // Update app list if visible
+                    // ---> Send message to background script <---
+                    chrome.runtime.sendMessage({ type: 'settingsUpdated' }, (response) => {
+                        if (chrome.runtime.lastError) {
+                            // Handle potential error (e.g., background script not ready)
+                            console.warn("Could not send settings update message:", chrome.runtime.lastError.message);
+                        } else {
+                            // console.log("Sent settings update message.");
+                        }
+                    });
+                    // ---> End message sending <---
+                    
+                    // Update app list IF we are still on the overview page 
+                    // (though usually we are on settings page here)
                     if (currentPage === 'overview-page') {
                         updateAppList(currentPeriod);
                     }
@@ -521,23 +589,5 @@ document.addEventListener('DOMContentLoaded', function() {
         
         chartHtml += '</div>';
         return chartHtml;
-    }
-    
-    // Utility function to generate random time data
-    function getRandomTimeAndPercentage() {
-        // Generate random hour and minute
-        const hours = Math.floor(Math.random() * 100); // Allow larger hour values for testing
-        const minutes = Math.floor(Math.random() * 60);
-    
-        // Format with consistent character width and balanced columns
-        let hoursStr = hours.toString(); // No padding to save space
-        let minutesStr = minutes.toString().padStart(2, '0');
-    
-        // Calculate the percentage of the day that has passed
-        const totalMinutes = hours * 60 + minutes;
-        const percentageOfDay = Math.floor((totalMinutes / (24 * 60)) * 100);
-    
-        // Return formatted time and percentage
-        return [`${hoursStr}h ${minutesStr}mn`, percentageOfDay];
     }
 });
