@@ -160,25 +160,30 @@
     <!-- Template for app stats in the statistics page -->
     <template id="app-stats-template">
         <div class="app-stat-card">
-            <div class="app-stat-header">
-                <div class="app-icon-container">
+            <!-- App Name as Title -->
+            <h3 class="app-name app-stat-title"></h3> 
+            
+            <div class="app-stat-navigation">
+                <button class="stat-nav-button prev-stat-button">
+                    <span class="material-icons">arrow_back_ios</span>
+                </button>
+                <div class="app-icon-container stat-icon">
                     <img class="app-icon" src="" alt="">
                 </div>
-                <h3 class="app-name"></h3>
-                <button class="close-stats">
-                    <span class="material-icons">close</span>
+                <button class="stat-nav-button next-stat-button">
+                    <span class="material-icons">arrow_forward_ios</span>
                 </button>
             </div>
+
             <div class="app-usage-chart">
                 <div class="chart-container">
                     <!-- Chart will be generated here -->
                 </div>
                 <div class="time-average">
-                    <h4 class="daily-avg">34 min</h4>
+                    <h4 class="daily-avg">0 min</h4> <!-- Default to 0 -->
                     <p>Daily Average</p>
                 </div>
             </div>
-            <button class="edit-limit-button">Edit Limit</button>
         </div>
     </template>
 
