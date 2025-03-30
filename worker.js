@@ -258,53 +258,57 @@ chrome.alarms.onAlarm.addListener(async (alarm) => {
 chrome.tabs.onActivated.addListener(async (activeInfo) => {
     try {
         const tab = await chrome.tabs.get(activeInfo.tabId);
+        // --- Debug Log ---
+        console.log(`[onActivated] Tab ID: ${activeInfo.tabId}, URL: ${tab?.url}`);
+        // --- End Debug Log ---
         if (tab && canAccessUrl(tab.url)) {
             const appId = checkCurrentTabUrl(tab.url);
-            // console.log(`Tab Activated: ${tab.url}, AppId: ${appId}`);
             await startTimerForApp(appId);
         } else {
-            // console.log(`Tab Activated: Cannot access URL or tab not found.`);
-            await stopCurrentTimer(); // Stop timer if we switch to an inaccessible tab
+            await stopCurrentTimer();
         }
     } catch (error) {
-        console.error("Error in tabs.onActivated:", error);
-        await stopCurrentTimer(); // Stop timer on error
+        console.error("[onActivated] Error:", error);
+        await stopCurrentTimer();
     }
 });
 
 // Tab Updated: URL changes in a tab
 chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-    // Check if the URL changed and the tab is active
+    // --- Debug Log ---
+    if (changeInfo.url) { // Log only if URL actually changed
+        console.log(`[onUpdated] Tab ID: ${tabId}, Active: ${tab.active}, New URL: ${changeInfo.url}`);
+    }
+    // --- End Debug Log ---
     if (changeInfo.url && tab.active && canAccessUrl(tab.url)) {
-        const appId = checkCurrentTabUrl(tab.url);
-        // console.log(`Tab Updated: ${tab.url}, AppId: ${appId}`);
+        const appId = checkCurrentTabUrl(tab.url); // Use tab.url here, not changeInfo.url directly
         await startTimerForApp(appId);
     } else if (changeInfo.url && tab.active && !canAccessUrl(tab.url)) {
-        // console.log(`Tab Updated: Switched to inaccessible URL`);
         await stopCurrentTimer();
     }
 });
 
 // Window Focus Changed: User switches windows or minimizes/restores
 chrome.windows.onFocusChanged.addListener(async (windowId) => {
+    // --- Debug Log ---
+    console.log(`[onFocusChanged] Window ID: ${windowId}`);
+    // --- End Debug Log ---
     if (windowId === chrome.windows.WINDOW_ID_NONE) {
-        // console.log("Window lost focus");
         await stopCurrentTimer();
     } else {
-        // console.log("Window gained focus");
         try {
-            // Check the active tab in the newly focused window
             const [activeTab] = await chrome.tabs.query({ active: true, windowId: windowId });
+             // --- Debug Log ---
+            console.log(`[onFocusChanged] Focused window active tab URL: ${activeTab?.url}`);
+             // --- End Debug Log ---
             if (activeTab && canAccessUrl(activeTab.url)) {
                 const appId = checkCurrentTabUrl(activeTab.url);
-                // console.log(`Focused window tab: ${activeTab.url}, AppId: ${appId}`);
                 await startTimerForApp(appId);
             } else {
-                 // console.log(`Focused window tab inaccessible or not found.`);
-                await stopCurrentTimer(); // Stop if focused tab is not trackable
+                await stopCurrentTimer(); 
             }
         } catch (error) {
-            console.error("Error in windows.onFocusChanged:", error);
+            console.error("[onFocusChanged] Error:", error);
             await stopCurrentTimer();
         }
     }

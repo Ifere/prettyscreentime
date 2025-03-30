@@ -32,6 +32,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     let trackedAppIds = []; // Keep track of the order for navigation
     let currentStatIndex = 0; // Index of the currently displayed app
+    let refreshIntervalId = null; // ID for the refresh timer
     
     // First-time user detection
     chrome.storage.local.get(["firstTimeUser", "checkPersist"], function(data) {
@@ -63,6 +64,26 @@ document.addEventListener('DOMContentLoaded', function() {
             // Load app data and render UI
             renderUI();
         }
+
+        // --- Start Periodic Refresh Timer ---
+        // Clear any existing interval first to prevent duplicates
+        if (refreshIntervalId) {
+            clearInterval(refreshIntervalId);
+        }
+        // Set interval to refresh data every 60 seconds
+        refreshIntervalId = setInterval(() => {
+            // console.log("Refreshing UI data..."); // Optional: for debugging
+            try {
+                if (currentPage === 'overview-page') { // Only refresh if overview is visible
+                    updateAppList(currentPeriod);
+                }
+            } catch (error) {
+                console.error("Error during periodic UI refresh:", error);
+                // Optionally clear interval if errors persist, or just log it
+                // clearInterval(refreshIntervalId);
+            }
+        }, 60000); // 60000 ms = 1 minute
+        // --- End Periodic Refresh Timer ---
     });
     
     // Set up event listeners for menu and navigation
@@ -145,9 +166,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const period = this.getAttribute('data-period');
                 setActivePeriod(period);
                 updateAppList(period);
-            });
         });
-        
+    });
+
         // Focus mode button
         document.getElementById('start-focus').addEventListener('click', function() {
             alert('Focus mode would be activated here');
@@ -249,8 +270,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const screenTimeData = result.screenTimeData || {};
             const currentSelectedApps = result.checkPersist || selectedApps; // Use stored or default
 
+            // ---> Log the data we're working with <---
+            console.log(`[updateAppList period=${period}] screenTimeData:`, JSON.parse(JSON.stringify(screenTimeData)));
+            console.log(`[updateAppList period=${period}] currentSelectedApps:`, JSON.parse(JSON.stringify(currentSelectedApps)));
+            // ---> End Log <---
+
             let totalTimeInMinutes = 0;
-            const appTotals = {}; // { appId: totalMinutesForPeriod }
+            let appTotals = {};
 
             const today = new Date();
             const todayKey = getDayKey(today);
@@ -281,29 +307,46 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     }
                 }
-            } else { // month (approx last 30 days for simplicity)
-                for (let i = 0; i < 30; i++) {
-                    const date = new Date(today);
-                    date.setDate(today.getDate() - i);
-                    const dayKey = getDayKey(date);
-                    const weekKey = getWeekKey(date);
+            } else { // month - TEMPORARY TEST: Only check today's data
+                console.log("[Month Aggregation TEST] Starting - Checking only today...");
+                totalTimeInMinutes = 0; 
+                appTotals = {}; 
 
-                    const weekData = screenTimeData[weekKey] || {};
-                    const dayData = weekData[dayKey] || {};
-                    for (const appId in dayData) {
-                        if (currentSelectedApps[appId]) {
-                            const timeMs = dayData[appId].timeSpentMs || 0;
-                            const timeMinutes = Math.round(timeMs / 60000);
-                            appTotals[appId] = (appTotals[appId] || 0) + timeMinutes;
-                            // Add to total only once per app per day if logic requires
-                            // This simple sum might overestimate if month includes partial days from week view
-                            // For now, summing directly for simplicity:
-                            if (i === 0) totalTimeInMinutes += timeMinutes; // Simplistic total for demo
+                // --- ONLY CHECK i=0 (Today) for testing ---
+                const i = 0; 
+                const date = new Date(today);
+                // date.setDate(today.getDate() - i); // Not needed for i=0
+                const dayKey = getDayKey(date);
+                const weekKey = getWeekKey(date); 
+                console.log(`[Month Aggregation TEST] Checking DayKey: ${dayKey}, WeekKey: ${weekKey}`); 
+
+                // ---> Log data right before access <---
+                console.log(`[Month Aggregation TEST i=${i}] screenTimeData for weekKey access:`, JSON.parse(JSON.stringify(screenTimeData)));
+                console.log(`[Month Aggregation TEST i=${i}] currentSelectedApps for check:`, JSON.parse(JSON.stringify(currentSelectedApps)));
+
+                const weekData = screenTimeData[weekKey];
+                if (weekData) {
+                    const dayData = weekData[dayKey];
+                    if (dayData) {
+                        console.log(`[Month Aggregation TEST] Found dayData for ${dayKey}:`, JSON.parse(JSON.stringify(dayData))); 
+                        for (const appId in dayData) {
+                            if (currentSelectedApps[appId] && dayData[appId]) { 
+                                const timeMs = dayData[appId].timeSpentMs || 0;
+                                console.log(`[Month Aggregation TEST] Matched App: ${appId}, Selected: ${currentSelectedApps[appId]}, TimeMs: ${timeMs}`);
+                                const timeMinutes = Math.round(timeMs / 60000);
+                                if (timeMinutes > 0) {
+                                    console.log(`[Month Aggregation TEST] Found ${timeMinutes}m for ${appId} on ${dayKey}`);
+                                }
+                                appTotals[appId] = (appTotals[appId] || 0) + timeMinutes;
+                            }
                         }
-                    }
-                }
-                 // Recalculate total for month based on appTotals for accuracy
-                 totalTimeInMinutes = Object.values(appTotals).reduce((sum, time) => sum + time, 0);
+                    } 
+                } 
+                // --- End ONLY CHECK i=0 ---
+                
+                console.log("[Month Aggregation TEST] Final appTotals before reduce:", JSON.parse(JSON.stringify(appTotals))); 
+                totalTimeInMinutes = Object.values(appTotals).reduce((sum, time) => sum + time, 0);
+                console.log("[Month Aggregation TEST] Final totalTimeInMinutes:", totalTimeInMinutes);
             }
             // --- End Data Aggregation ---
 
