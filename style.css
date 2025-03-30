@@ -289,6 +289,13 @@ body, html {
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: rgba(0,0,0,0.1) transparent;
+    opacity: 1; /* Start fully visible */
+    transition: opacity 0.3s ease-in-out; /* Add fade transition */
+}
+
+.app-list.loading-data {
+    opacity: 0.3; /* Fade out slightly during load */
+    pointer-events: none; /* Prevent interaction during load */
 }
 
 .app-item {

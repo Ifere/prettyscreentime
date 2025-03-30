@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', function() {
             welcomeOverlay.style.left = "0";
             welcomeOverlay.style.width = "100%";
             welcomeOverlay.style.height = "100%";
-            welcomeOverlay.style.backgroundColor = "var(--quaternary-color)";
+            welcomeOverlay.style.backgroundColor = "var(--white)";
             welcomeOverlay.style.color = "white";
             welcomeOverlay.style.display = "flex";
             welcomeOverlay.style.flexDirection = "column";
@@ -114,9 +114,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Add welcome message content
             welcomeOverlay.innerHTML = `
                 <img src="/plogo500.png" alt="logo" style="width: 80px; height: 80px; margin-bottom: 20px;">
-                <h2 style="font-size: 24px; margin-bottom: 15px;">Pretty Screentime✨</h2>
-                <p style="font-size: 16px; margin-bottom: 35px;">Hello👋🏼 and welcome! It's time to track your screen time beautifully😉</p>
-                <button id="getStartedBtn" style="background-color: var(--white); color: var(--secondary-color); border: none; padding: 12px 30px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">Continue</button>
+                <h2 style="font-size: 24px; margin-bottom: 15px; color: var(--quaternary-color);">Pretty Screentime✨</h2>
+                <p style="font-size: 16px; margin-bottom: 35px; color: var(--quaternary-color);">Hello👋🏼 and welcome! It's time to track your screen time beautifully😉</p>
+                <button id="getStartedBtn" style="background-color: var(--quaternary-color); color: var(--white); border: none; padding: 12px 30px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">Continue</button>
             `;
             
             // Add the overlay to the card
@@ -263,6 +263,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function updateAppList(period) {
         const appListContainer = document.getElementById('app-list-container');
+        appListContainer.classList.add('loading-data'); // <-- Add class to fade out
         appListContainer.innerHTML = ''; // Clear previous list
         
         try {
@@ -447,6 +448,9 @@ document.addEventListener('DOMContentLoaded', function() {
         } catch (error) {
             console.error("Error updating app list:", error);
             appListContainer.innerHTML = '<p style="color: red; text-align: center; padding: 20px;">Error loading data.</p>';
+        } finally {
+            // ---> Remove class to fade back in (always runs) <---
+            appListContainer.classList.remove('loading-data');
         }
     }
 
