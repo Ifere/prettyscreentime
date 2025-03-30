@@ -34,25 +34,25 @@ document.addEventListener('DOMContentLoaded', function() {
     chrome.storage.local.get(["firstTimeUser", "checkPersist"], function(data) {
         const isFirstTimeUser = data.firstTimeUser === undefined ? true : data.firstTimeUser;
         selectedApps = data.checkPersist || {
-            "netflix": true,
-            "youtube": true,
-            "twitter": false,
-            "facebook": false,
-            "instagram": false,
-            "pinterest": false,
-            "reddit": false,
-            "quora": false,
-            "amazon": false,
-            "spotify": false,
-            "tumblr": false,
-            "linkedin": false,
-            "slack": false,
-            "medium": false,
-            "twitch": false,
-            "discord": false,
-            "stack": false,
-            "leetcode": false,
-        };
+        "netflix": true,
+        "youtube": true,
+        "twitter": false,
+        "facebook": false,
+        "instagram": false,
+        "pinterest": false,
+        "reddit": false,
+        "quora": false,
+        "amazon": false,
+        "spotify": false,
+        "tumblr": false,
+        "linkedin": false,
+        "slack": false,
+        "medium": false,
+        "twitch": false,
+        "discord": false,
+        "stack": false,
+        "leetcode": false,
+    };
         
         if (isFirstTimeUser) {
             showWelcomeScreen();
@@ -233,14 +233,18 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update the total time display
         const hours = Math.floor(totalTime / 60);
         const minutes = totalTime % 60;
-        document.getElementById('total-time').textContent = `${hours}h ${minutes}m`;
+        
+        // Format with consistent character width and balanced columns
+        let hoursStr = hours.toString(); // No padding to save space
+        let minutesStr = minutes.toString().padStart(2, '0');
+        document.getElementById('total-time').textContent = `${hoursStr}:${minutesStr}`;
         
         // Update the circular progress
         const progressRing = document.querySelector('.progress-ring-circle');
         // Calculate percentage of day spent (assuming 16 waking hours)
         const maxMinutes = period === 'day' ? 16 * 60 : (period === 'week' ? 16 * 60 * 7 : 16 * 60 * 30);
         const percentage = Math.min(100, (totalTime / maxMinutes) * 100);
-        const circumference = 2 * Math.PI * 45;
+        const circumference = 2 * Math.PI * 103.5; // Updated to match the new SVG circle radius of 103.5
         progressRing.style.strokeDasharray = circumference;
         progressRing.style.strokeDashoffset = circumference - (percentage / 100) * circumference;
         
@@ -252,9 +256,9 @@ document.addEventListener('DOMContentLoaded', function() {
             // Add click event to show app details
             appElement.addEventListener('click', () => {
                 showAppDetails(item.appId);
-            });
         });
-        
+    });
+
         // Show a message if no apps are selected
         if (appItems.length === 0) {
             const emptyMessage = document.createElement('div');
@@ -401,18 +405,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // Utility function to generate random time data
     function getRandomTimeAndPercentage() {
         // Generate random hour and minute
-        const hours = Math.floor(Math.random() * 24);
+        const hours = Math.floor(Math.random() * 100); // Allow larger hour values for testing
         const minutes = Math.floor(Math.random() * 60);
     
-        // Format the hour and minute to ensure two digits
-        const formattedHours = hours.toString().padStart(2, '0');
-        const formattedMinutes = minutes.toString().padStart(2, '0');
+        // Format with consistent character width and balanced columns
+        let hoursStr = hours.toString(); // No padding to save space
+        let minutesStr = minutes.toString().padStart(2, '0');
     
         // Calculate the percentage of the day that has passed
         const totalMinutes = hours * 60 + minutes;
         const percentageOfDay = Math.floor((totalMinutes / (24 * 60)) * 100);
     
         // Return formatted time and percentage
-        return [`${formattedHours}h ${formattedMinutes}mn`, percentageOfDay];
+        return [`${hoursStr}h ${minutesStr}mn`, percentageOfDay];
     }
 });

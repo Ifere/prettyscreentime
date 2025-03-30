@@ -36,7 +36,7 @@ body, html {
 .card {
     border-radius: var(--card-radius);
     overflow: hidden;
-    width: 300px;
+    width: 360px;
     height: 100%;
     margin: 0 auto;
     box-shadow: var(--shadow);
@@ -164,7 +164,7 @@ body, html {
 .page {
     display: none;
     flex-direction: column;
-    padding: 16px;
+    padding: 10px 10px 20px 10px; /* Add more bottom padding */
     height: 100%;
     overflow-y: auto;
     scrollbar-width: thin;
@@ -179,6 +179,11 @@ body, html {
     font-size: 1.25rem;
     margin-bottom: 16px;
     color: var(--black);
+}
+
+/* Additional adjustment for the overview page specifically */
+#overview-page {
+    padding-bottom: 20px; /* Reduced from 60px to bring app list closer */
 }
 
 /* Overview Page Styles */
@@ -212,13 +217,15 @@ body, html {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 0;
+    padding: 10px 0 20px; /* Adjusted padding for new size */
+    overflow: visible;
 }
 
 .time-circle {
     position: relative;
-    width: 300px;
-    height: 300px;
+    width: 675px; /* Increased size by 50% */
+    height: 675px; /* Increased size by 50% */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -229,20 +236,21 @@ body, html {
     width: 100%;
     height: 100%;
     transform: rotate(-90deg);
+    position: relative;
 }
 
 .progress-ring-bg {
     fill: none;
     stroke: var(--light-gray);
-    stroke-width: 8;
+    stroke-width: 15; /* Increased stroke width by 50% */
 }
 
 .progress-ring-circle {
     fill: none;
     stroke: var(--primary-color);
-    stroke-width: 8;
-    stroke-dasharray: 283;
-    stroke-dashoffset: 70; /* Adjust based on percentage */
+    stroke-width: 18; /* Increased stroke width by 50% */
+    stroke-dasharray: 650.31; /* Updated for new circumference (2 * PI * 103.5) */
+    stroke-dashoffset: 70;
     stroke-linecap: round;
     transition: stroke-dashoffset 0.5s ease;
 }
@@ -250,19 +258,29 @@ body, html {
 .time-display {
     position: absolute;
     text-align: center;
+    width: 300px; /* Increased width by 50% */
+    transform: translateY(0px);
 }
 
 .time-display h2 {
-    font-size: 0.5rem;
-    font-weight: 300;
+    font-size: 1.5rem; /* Reduced font size by 25% */
+    font-weight: 700;
     margin: 0;
     color: var(--black);
+    line-height: 1.1;
+    letter-spacing: -2px;
+    font-variant-numeric: tabular-nums;
+    font-family: 'Roboto Mono', monospace, 'Segoe UI', Arial, sans-serif;
+    transform: none;
+    white-space: nowrap;
 }
 
 .time-display p {
-    font-size: 0.8rem;
+    font-size: 0.75rem; /* Reduced font size by 25% */
     color: var(--dark-gray);
+    margin-top: 4px; /* Slightly adjusted margin */
     margin: 0;
+    transform: none;
 }
 
 .app-list {
@@ -280,6 +298,7 @@ body, html {
     border-radius: 10px;
     margin-bottom: 10px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin-right: 3px;
 }
 
 .app-icon-container {
@@ -315,12 +334,41 @@ body, html {
     background-color: var(--light-gray);
     border-radius: 3px;
     overflow: hidden;
+    position: relative;
+}
+
+.progress-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to right, 
+        rgba(255,255,255,0.1), 
+        rgba(255,255,255,0.2), 
+        rgba(255,255,255,0.1)
+    );
+    pointer-events: none;
+    z-index: 1;
 }
 
 .progress-bar {
     height: 100%;
     background-color: var(--secondary-color);
     border-radius: 3px;
+    position: relative;
+}
+
+.progress-bar::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.4));
+    border-radius: 0 3px 3px 0;
 }
 
 .app-time {
@@ -334,6 +382,8 @@ body, html {
 .settings-container {
     flex: 1;
     overflow-y: auto;
+    padding-right: 3px !important;
+    margin-right: 2px;
 }
 
 .settings-section {
@@ -470,12 +520,16 @@ input:checked + .slider:before {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    padding-right: 3px !important;
+    margin-right: 2px;
 }
 
 /* Statistics Page Styles */
 .stats-container {
     flex: 1;
     overflow-y: auto;
+    padding-right: 3px !important;
+    margin-right: 2px;
 }
 
 .app-stat-card {
@@ -631,4 +685,44 @@ input:checked + .slider:before {
     .time-display h2 {
         font-size: 1.8rem;
     }
+}
+
+/* Common scrollable container styles */
+.scrollable-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    position: relative;
+    padding-right: 2px; /* Ensure content doesn't touch the right edge */
+    scroll-behavior: smooth; /* Add smooth scrolling */
+    -webkit-overflow-scrolling: touch; /* Smooth momentum scrolling on iOS */
+    overscroll-behavior: contain; /* Prevent scroll chaining */
+}
+
+.scrollable-container::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1px;
+    height: 100%;
+    background-color: var(--medium-gray);
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.scrollable-container::-webkit-scrollbar {
+    width: 1px; /* Set to exactly 1px */
+    background: transparent;
+}
+
+.scrollable-container::-webkit-scrollbar-thumb {
+    background-color: var(--medium-gray);
+    opacity: 0.4;
+}
+
+/* Add smooth scrolling to the entire document */
+html {
+    scroll-behavior: smooth;
 }

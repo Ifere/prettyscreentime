@@ -6,6 +6,7 @@
     <title>Pretty Screentime</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -42,18 +43,18 @@
         <!-- Main content area -->
         <div class="card-body">
             <!-- Overview Page (Default) -->
-            <div id="overview-page" class="page active">
+            <div id="overview-page" class="page scrollable-container active">
                 <div class="time-period-selector">
                     <button class="period-button active" data-period="day">Day</button>
                     <button class="period-button" data-period="week">Week</button>
                     <button class="period-button" data-period="month">Month</button>
-                </div>
+            </div>
 
                 <div class="daily-summary">
                     <div class="time-circle">
-                        <svg viewBox="0 0 100 100" class="progress-ring">
-                            <circle class="progress-ring-bg" cx="50" cy="50" r="45" />
-                            <circle class="progress-ring-circle" cx="50" cy="50" r="45" />
+                        <svg viewBox="0 0 225 225" class="progress-ring">
+                            <circle class="progress-ring-bg" cx="112.5" cy="112.5" r="103.5" />
+                            <circle class="progress-ring-circle" cx="112.5" cy="112.5" r="103.5" />
                         </svg>
                         <div class="time-display">
                             <h2 id="total-time">4h 12m</h2>
@@ -62,62 +63,62 @@
                     </div>
                 </div>
 
-                <div id="app-list-container" class="app-list">
+                <div id="app-list-container" class="app-list scrollable-container">
                     <!-- App items will be inserted here via JavaScript -->
                 </div>
             </div>
 
             <!-- Settings Page -->
-            <div id="settings-page" class="page">
+            <div id="settings-page" class="page scrollable-container">
                 <h2>Settings</h2>
-                <div class="settings-container">
+                <div class="settings-container scrollable-container">
                     <div class="settings-section">
                         <h3>Tracked Apps</h3>
-                        <div class="app-toggles scroll-container">
+                        <div class="app-toggles scrollable-container">
                             <!-- App toggles will be generated here -->
                         </div>
                     </div>
-                </div>
-            </div>
+                        </div>
+                        </div>
 
             <!-- Focus Mode Page -->
-            <div id="focus-page" class="page">
+            <div id="focus-page" class="page scrollable-container">
                 <h2>Focus Mode</h2>
                 <div class="focus-container">
                     <div class="focus-header">
                         <h3>Let's get focused!</h3>
-                    </div>
+                            </div>
                     <button id="start-focus" class="primary-button">Start Focus Mode</button>
                     
                     <div class="focus-apps-section">
                         <h4>Block Websites</h4>
-                        <div id="focus-apps-list" class="focus-apps scroll-container">
+                        <div id="focus-apps-list" class="focus-apps scrollable-container">
                             <!-- Focus mode app toggles will be generated here -->
                         </div>
                     </div>
-                </div>
+                        </div>
             </div>
 
             <!-- Statistics Page -->
-            <div id="stats-page" class="page">
+            <div id="stats-page" class="page scrollable-container">
                 <h2>Usage Statistics</h2>
-                <div class="stats-container">
-                    <div id="app-details-container" class="app-details scroll-container">
+                <div class="stats-container scrollable-container">
+                    <div id="app-details-container" class="app-details scrollable-container">
                         <!-- Individual app stats will go here -->
                     </div>
                 </div>
             </div>
 
             <!-- About Page -->
-            <div id="about-page" class="page">
+            <div id="about-page" class="page scrollable-container">
                 <div class="about-container">
                     <img src="/plogo128.png" alt="logo" class="large-logo">
                     <h2>Pretty Screentime</h2>
                     <p>Let's track your screen time beautifully</p>
                     <p class="version">Version 1.2.0</p>
                     <div class="about-info">
-                        <p>Created by Immanuel Ifere</p>
-                        <p>Email: eefairay@gmail.com</p>
+                        <p>Created by Bebo St. James</p>
+                        <p>Visit <a href="https://www.manuelifere.super.site" target="_blank">Case de Bebo</a> for more</p>
                     </div>
                 </div>
             </div>
