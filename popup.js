@@ -176,6 +176,8 @@ document.addEventListener('DOMContentLoaded', function() {
             renderFocusAppList();
         } else if (pageName === 'stats-page') {
             renderStatisticsPage();
+        } else if (pageName === 'overview-page') {
+            updateAppList(currentPeriod);
         }
     }
     
