@@ -15,7 +15,6 @@ Welcome to the home of Pretty Screentime - a streamlined Chrome extension design
 - HTML
 - CSS
 - JavaScript
-- JQuery
 
 ## Getting Involved
 
