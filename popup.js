@@ -116,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
             welcomeOverlay.innerHTML = `
                 <img src="/plogo500.png" alt="logo" style="width: 80px; height: 80px; margin-bottom: 20px;">
                 <h2 style="font-size: 24px; margin-bottom: 15px; color: var(--quaternary-color);">Pretty Screentime✨</h2>
-                <p style="font-size: 16px; margin-bottom: 35px; color: var(--quaternary-color);">Hello👋🏼 and welcome! It's time to track your screen time beautifully😉</p>
+                <p style="font-size: 16px; margin-bottom: 35px; color: var(--quaternary-color);">Hello👋🏼, I'm your pretty browser companion! Focus mode, and distraction blocking coming soon 😉.</p>
                 <button id="getStartedBtn" style="background-color: var(--quaternary-color); color: var(--white); border: none; padding: 12px 30px; border-radius: 25px; font-size: 16px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">Continue</button>
             `;
             

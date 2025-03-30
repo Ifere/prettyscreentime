@@ -1,8 +1,8 @@
 {
     "manifest_version": 3, 
     "name": "Pretty Screentime",
-    "description": "Reports Screen Time data of your favourite websites",
-    "version": "1.2.0",    
+    "description": "Pretty helps you understand how you spend time online—across all websites, every single day; clean, simple, and private.",
+    "version": "1.1.0",    
     "content_scripts": [{
         "matches": [
     "*://*.youtube.com/*",
