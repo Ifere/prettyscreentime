@@ -375,9 +375,12 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // 6. Create and append app items
             sortedAppItems.forEach(item => {
-                const appPercentage = totalTimeInMinutes > 0 ? Math.min(100, (item.timeInMinutes / totalTimeInMinutes) * 100) : 0;
+                // Calculate percentage for the app item's progress bar (relative to PERIOD MAXIMUM)
+                const appPercentageOfPeriod = periodMaximumMinutes > 0 ? Math.min(100, (item.timeInMinutes / periodMaximumMinutes) * 100) : 0;
+                // Format the final time for display in the list
                 const timeFormatted = formatMinutesToAppListString(item.timeInMinutes);
-                const appElement = createAppElement(item.appId, item.name, item.icon, timeFormatted, appPercentage);
+                // Pass the new percentage to createAppElement
+                const appElement = createAppElement(item.appId, item.name, item.icon, timeFormatted, appPercentageOfPeriod);
                 appListContainer.appendChild(appElement);
             });
 
