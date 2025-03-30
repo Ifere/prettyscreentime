@@ -289,6 +289,29 @@ document.addEventListener('DOMContentLoaded', function() {
         // 4. Update the total time display using the final totalTimeInMinutes
         document.getElementById('total-time').textContent = formatMinutesToHoursMinutesString(totalTimeInMinutes);
         
+        // ---> START: Update Time Period Label <---
+        const timePeriodLabel = document.getElementById('time-period-label');
+        const now = new Date();
+        let labelText = '';
+
+        if (period === 'day') {
+            const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            labelText = daysOfWeek[now.getDay()];
+        } else if (period === 'week') {
+            const dayOfMonth = now.getDate();
+            const weekOfMonth = Math.ceil(dayOfMonth / 7);
+            let suffix = 'th';
+            if (weekOfMonth === 1) suffix = 'st';
+            else if (weekOfMonth === 2) suffix = 'nd';
+            else if (weekOfMonth === 3) suffix = 'rd';
+            labelText = `${weekOfMonth}${suffix} Week`;
+        } else { // month
+            const monthsOfYear = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+            labelText = monthsOfYear[now.getMonth()];
+        }
+        timePeriodLabel.textContent = labelText;
+        // ---> END: Update Time Period Label <---
+
         // 5. Update the circular progress (using periodMaximumMinutes as 100% mark)
         const progressRing = document.querySelector('.progress-ring-circle');
         const percentageOfPeriod = periodMaximumMinutes > 0 ? Math.min(100, (totalTimeInMinutes / periodMaximumMinutes) * 100) : 0;
