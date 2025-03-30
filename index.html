@@ -1,268 +1,250 @@
 <!DOCTYPE html>
-<html dir="ltr" lang="en";>
+<html lang="en">
 
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta charset="UTF-8">
     <title>Pretty Screentime</title>
-    <link href="dist/css/style.min.css" rel="stylesheet">
-
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
-<body> 
-<div class="card">
-    <div class="card-body" style="width: 300px;" >
 
-        <div class="chat-img d-inline" style="margin-bottom: 5px;"><img src="48.png"
-            alt="user" class="rounded-square" width="25">
-    </div><h4 class="card-title d-inline " style="text-align: center;">PRETTY SCREENTIME</h4>
-        <ul class="nav nav-tabs mt-2 mb-3" style="width: 100%;">
-            <li class="nav-item" style="width: 33.33%;">
-                <a href="#home" data-toggle="tab" class="nav-link" style="font-size: smaller; text-align: center;">
-                     Week
-                </a>
-            </li>
-            <li class="nav-item" style="width: 33.33%;">
-                <a href="#profile" data-toggle="tab" aria-expanded="true" class="nav-link active" style="font-size: smaller; text-align: center;">
-                    Today
-                </a>
-            </li>
-            <li class="nav-item" style="width: 33.33%;">
-                <a href="#settings" data-toggle="tab" aria-expanded="false" class="nav-link" style="font-size: smaller; text-align: center;">
-              Select
-                </a>
-            </li>
+<body>
+    <div class="card">
+        <!-- Header with hamburger menu -->
+        <div class="card-header">
+            <div class="header-content">
+                <img src="/plogo128.png" alt="logo" class="logo">
+                <h4 class="card-title">Pretty Screentime</h4>
+                
+                <!-- Theme Toggle Switch -->
+                <label class="theme-switch" for="theme-switch-checkbox">
+                    <input type="checkbox" id="theme-switch-checkbox" />
+                    <span class="theme-slider">
+                        <span class="material-icons sun-icon">light_mode</span>
+                        <span class="material-icons moon-icon">dark_mode</span>
+                    </span>
+                </label>
 
-        </ul>
-
-        <div class="tab-content" style="width: 100%;">
-            <div class="tab-pane" id="home">
-                <ul class="list-group" id="weekly" >
-
-                </ul>
+                <button id="menu-toggle" class="menu-button">
+                    <span class="material-icons">menu</span>
+                </button>
             </div>
-
-            <div class="tab-pane show active" id="profile">
-                <ul class="list-group" id="daily">
-
-                </ul>
-            </div>
-            <!-- <div class="tab-pane show active" id="settings"> -->
-            <div class="tab-pane mb-0" id="settings">
-                <ul class="list-group" id="select">
-                    <li class="list-group-item list-group-item-default">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="netflixCheck">
-                            <label class="custom-control-label" for="netflixCheck"><span> <img
-                                        src="assets/images/icons/netflix.png" alt="user" class="rounded-square"
-                                        width="25"> </span>Netflix</label>
-                        </div>
-
-                    </li>
-                    <li class="list-group-item list-group-item-default">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="youtubeCheck"
-                                onclick="checkStatus('youtube')">
-                            <label class="custom-control-label" for="youtubeCheck"><span> <img
-                                        src="assets/images/icons/youtube.png" alt="user" class="rounded-square"
-                                        width="25"> </span>YouTube</label>
-
-                        </div>
-                    </li>
-
-                    <li class="list-group-item list-group-item-default">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="twitterCheck"
-                                onclick="checkStatus('twitter')">
-                            <label class="custom-control-label" for="twitterCheck"><span> <img
-                                        src="assets/images/icons/twitter.png" alt="user" class="rounded-square"
-                                        width="25"> </span>Twitter</label>
-                        </div>
-
-                    </li>
-                    <li class="list-group-item list-group-item-default">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="facebookCheck"
-                                onclick="checkStatus('facebook')">
-                            <label class="custom-control-label" for="facebookCheck"><span> <img
-                                        src="assets/images/icons/facebook.png" alt="user" class="rounded-square"
-                                        width="25"> </span>Facebook</label>
-                        </div>
-                    </li>
-                    <li class="list-group-item list-group-item-default">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="instagramCheck"
-                                onclick="checkStatus('instagram')">
-                            <label class="custom-control-label" for="instagramCheck">
-                                <span> <img src="assets/images/icons/instagram.png" alt="user" class="rounded-square"
-                                        width="25"> </span>Instagram
-                            </label>
-                        </div>
-                    </li>
-                    <li class="list-group-item list-group-item-default">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="pinterestCheck"
-                                onclick="checkStatus('pinterest')">
-                            <label class="custom-control-label" for="pinterestCheck"><span> <img
-                                        src="assets/images/icons/pinterest.png" alt="user" class="rounded-square"
-                                        width="25"> </span>Pinterest</label>
-                        </div>
-                    </li>
-                    <li class="list-group-item list-group-item-default">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="redditCheck"
-                                onclick="checkStatus('reddit')">
-                            <label class="custom-control-label" for="redditCheck"><span> <img
-                                        src="assets/images/icons/reddit.png" alt="user" class="rounded-square"
-                                        width="25"> </span>Reddit</label>
-                        </div>
-                    </li>
-                    <li class="list-group-item list-group-item-default">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="quoraCheck"
-                                onclick="checkStatus('quora')">
-                            <label class="custom-control-label" for="quoraCheck"><span> <img
-                                        src="assets/images/icons/quora.png" alt="user" class="rounded-square"
-                                        width="25"> </span>Quora</label>
-                        </div>
-                    </li>
-
-
-                    <li class="list-group-item list-group-item-default">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="amazonCheck"
-                                onclick="checkStatus('amazon')">
-                            <label class="custom-control-label" for="amazonCheck"><span> <img
-                                        src="assets/images/icons/amazon.png" alt="user" class="rounded-square"
-                                        width="25"> </span>Amazon</label>
-                        </div>
-                    </li>
-
-                    <li class="list-group-item list-group-item-default">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="spotifyCheck"
-                                onclick="checkStatus('spotify')">
-                            <label class="custom-control-label" for="spotifyCheck"><span> <img
-                                        src="assets/images/icons/spotify.png" alt="user" class="rounded-square"
-                                        width="25"> </span>Spotify</label>
-                        </div>
-                    </li>
-
-                    <li class="list-group-item list-group-item-default">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="mediumCheck"
-                                onclick="checkStatus('medium')">
-                            <label class="custom-control-label mt-2" for="mediumCheck"><span> <img
-                                        src="assets/images/icons/medium.png" alt="user" class="rounded-square"
-                                        width="25"> </span>Medium</label>
-                        </div>
-                    </li>
-                    <li class="list-group-item list-group-item-default">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="linkedinCheck"
-                                onclick="checkStatus('linkedin')">
-                            <label class="custom-control-label" for="linkedinCheck"><span> <img
-                                        src="assets/images/icons/linkedin.png" alt="user" class="rounded-square"
-                                        width="25"> </span>LinkedIn</label>
-                        </div>
-                    </li>
-
-                    <li class="list-group-item list-group-item-default">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="slackCheck"
-                                onclick="checkStatus('slack')">
-                            <label class="custom-control-label" for="slackCheck"><span> <img
-                                        src="assets/images/icons/slack.png" alt="user" class="rounded-square"
-                                        width="25"> </span>Slack</label>
-                        </div>
-                    </li>
-
-                    <li class="list-group-item list-group-item-default">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="tumblrCheck"
-                                onclick="checkStatus('tumblr')">
-                            <label class="custom-control-label" for="tumblrCheck"><span> <img
-                                        src="assets/images/icons/tumblr.png" alt="user" class="rounded-square"
-                                        width="25"> </span>Tumblr</label>
-                        </div>
-                    </li>
-
-
-                    <li class="list-group-item list-group-item-default">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="twitchCheck"
-                                onclick="checkStatus('twitch')">
-                            <label class="custom-control-label" for="twitchCheck"><span> <img
-                                        src="assets/images/icons/twitch.png" alt="user" class="rounded-square"
-                                        width="25"> </span>Twitch</label>
-                        </div>
-                    </li>
-
-                    <li class="list-group-item list-group-item-default">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="discordCheck"
-                                onclick="checkStatus('discord')">
-                            <label class="custom-control-label" for="discordCheck"><span> <img
-                                        src="assets/images/icons/discord.png" alt="user" class="rounded-square"
-                                        width="25"> </span>Discord</label>
-                        </div>
-                    </li>
-
-                    <li class="list-group-item list-group-item-default">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="stackCheck"
-                                onclick="checkStatus('stack')">
-                            <label class="custom-control-label" for="stackCheck"><span> <img
-                                        src="assets/images/icons/stack.png" alt="user" class="rounded-square"
-                                        width="25"> </span>Stack Overflow</label>
-                        </div>
-                    </li>
-                    <li class="list-group-item list-group-item-default">
-                        <div class="custom-control custom-checkbox">
-                            <input type="checkbox" class="custom-control-input" id="leetcodeCheck"
-                                onclick="checkStatus('leetcode')">
-                            <label class="custom-control-label" for="leetcodeCheck"><span> <img
-                                        src="assets/images/icons/leetcode.png" alt="user" class="rounded-square"
-                                        width="25"> </span>LeetCode</label>
-                        </div>
-                    </li>
-
-
-                </ul>
-
-            </div>
-
-
-
         </div>
 
-    </div> <!-- end card-body-->
-</div> <!-- end card-->
-<script type="text/javascript" src="jquery-3.5.1.js"></script>
-<script type="text/javascript" src="append.js"></script>
+        <!-- Hamburger menu sidebar -->
+        <div id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <img src="/plogo128.png" alt="logo" class="logo">
+                <h4>Pretty Screentime</h4>
+                <button id="close-menu" class="close-button">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <ul class="sidebar-menu">
+                <li data-page="overview-page" class="active"><span class="material-icons">dashboard</span>Overview</li>
+                <li data-page="settings-page"><span class="material-icons">settings</span>Settings</li>
+                <li data-page="focus-page"><span class="material-icons">do_not_disturb</span>Focus Mode</li>
+                <li data-page="stats-page"><span class="material-icons">bar_chart</span>Statistics</li>
+                <li data-page="about-page"><span class="material-icons">info</span>About</li>
+            </ul>
+        </div>
 
+        <!-- Main content area -->
+        <div class="card-body">
+            <!-- Overview Page (Default) -->
+            <div id="overview-page" class="page scrollable-container active">
+                <div class="time-period-selector">
+                    <button class="period-button active" data-period="day">Day</button>
+                    <button class="period-button" data-period="week">Week</button>
+                    <button class="period-button" data-period="month">Month</button>
+            </div>
 
+                <div class="daily-summary">
+                    <div class="time-circle">
+                        <svg viewBox="0 0 225 225" class="progress-ring">
+                            <circle class="progress-ring-bg" cx="112.5" cy="112.5" r="103.5" />
+                            <circle class="progress-ring-circle" cx="112.5" cy="112.5" r="103.5" />
+                        </svg>
+                        <div class="time-display">
+                            <h2 id="total-time">4h 12m</h2>
+                            <p id="time-period-label">Today</p>
+                        </div>
+                    </div>
+                </div>
 
+                <div id="app-list-container" class="app-list scrollable-container">
+                    <!-- App items will be inserted here via JavaScript -->
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="settings-page" class="page scrollable-container">
+                <h2>Settings</h2>
+                <div class="settings-container scrollable-container">
+                    <div class="settings-section">
+                        <h3>Tracked Apps</h3>
+                        <div class="app-toggles scrollable-container">
+                            <!-- App toggles will be generated here -->
+                        </div>
+                    </div>
+                        </div>
+                        </div>
+
+            <!-- Focus Mode Page -->
+            <div id="focus-page" class="page scrollable-container">
+                <!-- Coming Soon Overlay -->
+                <div class="coming-soon-overlay">
+                    <span class="material-icons">hourglass_empty</span>
+                    <p>Focus Mode<br>Coming Soon!</p>
+                </div>
+                <!-- Original Content (remains hidden under overlay) -->
+                <h2>Focus Mode</h2>
+                <div class="focus-container">
+                    <div class="focus-header">
+                        <h3>Let's get focused!</h3>
+                    </div>
+                    <button id="start-focus" class="primary-button">Start Focus Mode</button>
+                    <div class="focus-apps-section">
+                        <h4>Block Websites</h4>
+                        <div id="focus-apps-list" class="focus-apps scrollable-container">
+                            <!-- Focus mode app toggles will be generated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Page -->
+            <div id="stats-page" class="page scrollable-container">
+                <!-- Coming Soon Overlay -->
+                <div class="coming-soon-overlay">
+                    <span class="material-icons">analytics</span>
+                    <p>Detailed Statistics<br>Coming Soon!</p>
+                </div>
+                <!-- Original Content (Static Placeholder) -->
+                <h2>Usage Statistics</h2>
+                <div class="stats-container scrollable-container">
+                    <!-- Static placeholder card structure -->
+                    <div class="app-stat-card">
+                        <h3 class="app-name app-stat-title">Slack</h3> 
+                        <div class="app-stat-navigation">
+                            <button class="stat-nav-button prev-stat-button" disabled>
+                                <span class="material-icons">arrow_back_ios</span>
+                            </button>
+                            <div class="app-icon-container stat-icon">
+                                <!-- Placeholder Icon or leave empty -->
+                                <img src="/assets/images/icons/slack.png" alt="Netflix Logo" class="app-icon">
+                                <!-- <span class="material-icons" style="color: var(--medium-gray);"></span> -->
+                            </div>
+                            <button class="stat-nav-button next-stat-button" disabled>
+                                <span class="material-icons">arrow_forward_ios</span>
+                            </button>
+                        </div>
+                        <div class="app-usage-chart">
+                            <div class="chart-container"> 
+                                <!-- Basic placeholder bars (can be refined with CSS if needed) -->
+                                <div style="display: flex; justify-content: space-between; align-items: flex-end; height: 100%; padding: 10px 5px 0; box-sizing: border-box;">
+                                    <div style="height: 20%; background-color: #C9D1F9; width: 12px; border-radius: 4px;"></div>
+                                    <div style="height: 35%; background-color: #C9D1F9; width: 12px; border-radius: 4px;"></div>
+                                    <div style="height: 60%; background-color: #C9D1F9; width: 12px; border-radius: 4px;"></div>
+                                    <div style="height: 45%; background-color: #C9D1F9; width: 12px; border-radius: 4px;"></div>
+                                    <div style="height: 80%; background-color: var(--secondary-color); width: 12px; border-radius: 4px;"></div>
+                                    <div style="height: 55%; background-color: #C9D1F9; width: 12px; border-radius: 4px;"></div>
+                                    <div style="height: 40%; background-color: #C9D1F9; width: 12px; border-radius: 4px;"></div>
+                                </div>
+                            </div>
+                            <div class="time-average">
+                                <h4 class="daily-avg">55 min</h4>
+                                <p>Daily Average</p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Remove dynamic container if no longer needed -->
+                    <!-- <div id="app-details-container" class="app-details scrollable-container"></div> -->
+                </div>
+            </div>
+
+            <!-- About Page -->
+            <div id="about-page" class="page scrollable-container">
+                <div class="about-container">
+                    <img src="/plogo128.png" alt="logo" class="large-logo">
+                    <h2>Pretty Screentime</h2>
+                    <p>Let's find the leaks in your most valuable resource and keep you productive!</p>
+                    <p class="version">Version 1.2.0</p>
+                    <div class="about-info">
+                        <p>© Bebo St. James</p>
+                        <p>Please send feedback to <a href="mailto:bebostjames@gmail.com">my Mail</a></p>
+
+                        <p>Visit <a href="https://manuelifere.super.site" target="_blank">mi Casa</a> for more</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Template for app items in the overview page -->
+    <template id="app-item-template">
+        <div class="app-item">
+            <div class="app-icon-container">
+                <img class="app-icon" src="" alt="">
+            </div>
+            <div class="app-details">
+                <h3 class="app-name"></h3>
+                <div class="progress-container">
+                    <div class="progress-bar"></div>
+                </div>
+            </div>
+            <div class="app-time"></div>
+        </div>
+    </template>
+
+    <!-- Template for app toggles in settings -->
+    <template id="app-toggle-template">
+        <div class="app-toggle">
+            <div class="toggle-left">
+                <div class="app-icon-container">
+                    <img class="app-icon" src="" alt="">
+                </div>
+                <span class="toggle-app-name"></span>
+            </div>
+            <label class="switch">
+                <input type="checkbox" class="toggle-checkbox">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </template>
+
+    <!-- Template for app stats in the statistics page -->
+    <template id="app-stats-template">
+        <div class="app-stat-card">
+            <!-- App Name as Title -->
+            <h3 class="app-name app-stat-title"></h3> 
+            
+            <div class="app-stat-navigation">
+                <button class="stat-nav-button prev-stat-button">
+                    <span class="material-icons">arrow_back_ios</span>
+                </button>
+                <div class="app-icon-container stat-icon">
+                    <img class="app-icon" src="" alt="">
+                </div>
+                <button class="stat-nav-button next-stat-button">
+                    <span class="material-icons">arrow_forward_ios</span>
+                </button>
+            </div>
+
+            <div class="app-usage-chart">
+                <div class="chart-container">
+                    <!-- Chart will be generated here -->
+                </div>
+                <div class="time-average">
+                    <h4 class="daily-avg">0 min</h4> <!-- Default to 0 -->
+                    <p>Daily Average</p>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="popup.js"></script>
 </body>
-
-<!-- All Jquery -->
-<!-- ============================================================== -->
-<script src="assets/libs/jquery/dist/jquery.min.js"></script>
-<!-- Bootstrap tether Core JavaScript -->
-<script src="assets/libs/popper.js/dist/umd/popper.min.js"></script>
-<script src="assets/libs/bootstrap/dist/js/bootstrap.min.js"></script>
-<!-- apps -->
-<!-- apps -->
-<script src="dist/js/app-style-switcher.js"></script>
-<script src="dist/js/feather.min.js"></script>
-<!-- slimscrollbar scrollbar JavaScript -->
-<script src="assets/libs/perfect-scrollbar/dist/perfect-scrollbar.jquery.min.js"></script>
-<script src="assets/extra-libs/sparkline/sparkline.js"></script>
-<!--Wave Effects -->
-<!-- themejs -->
-<!--Menu sidebar -->
-<script src="dist/js/sidebarmenu.js"></script>
-<!--Custom JavaScript -->
-<script src="dist/js/custom.min.js"></script>
-<!-- This Page JS -->
-<script src="assets/extra-libs/prism/prism.js"></script>
 
 </html>

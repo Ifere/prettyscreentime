@@ -1,10 +1,8 @@
 {
-    "manifest_version": 2, 
+    "manifest_version": 3, 
     "name": "Pretty Screentime",
-    "description": "Reports Screen Time data of your favourite websites",
-    "version": "1.1.0",
-    
-
+    "description": "Pretty helps you understand how you spend time online—across all websites, every single day; clean, simple, and private.",
+    "version": "1.1.0",    
     "content_scripts": [{
         "matches": [
     "*://*.youtube.com/*",
@@ -26,21 +24,37 @@
     "*://*.pinterest.com/*",
     "*://*.quora.com/*"
 ],
-        "js": ["server.js", "jquery-3.5.1.js"]
+        "js": ["server.js"]
     }],
+
     "background": {
-        "scripts": ["append.js"]
+        "service_worker": "worker.js"
     }, 
+
     "icons": {
-        "16": "20.png",
-        "48": "48.png",
-        "128": "128.png"
+        "16": "plogo16.png",
+        "32": "plogo32.png",
+        "48": "plogo48.png",
+        "128": "plogo128.png"
     },
+
     "permissions": [
-      "storage"
+      "storage",
+      "tabs",
+      "scripting",
+      "activeTab",
+      "webNavigation",
+      "alarms"
+
     ],
-    "browser_action": {
-        "default_icon": "20.png",
+
+    "action": {
+        "default_icon": {
+            "16": "plogo16.png",
+            "32": "plogo32.png",
+            "48": "plogo48.png",
+            "128": "plogo128.png"
+          },
         "default_popup": "index.html"
     }
 

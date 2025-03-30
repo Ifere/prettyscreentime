@@ -1,372 +1,1045 @@
-/* http://prismjs.com/download.html?themes=prism&languages=markup+css+clike+javascript+ruby+css-extras+git+jade+json+php+php-extras+sass+scss+sql&plugins=line-highlight+line-numbers+show-invisibles+autolinker+file-highlight+show-language+jsonp-highlight+highlight-keywords+remove-initial-line-feed+autoloader+unescaped-markup+command-line+normalize-whitespace+keep-markup */
+/* style.css */
+/* Color scheme based on reference images */
+:root {
+    --primary-color: #20C997; /* Mint color for primary elements */
+    --secondary-color: #5F75E8; /* Blue color for secondary elements */
+    --tertiary-color: #ebe5f1; /* Mint color for primary elements */
+    --quaternary-color: #0d142b; /* Light gray color for background */
+    --accent-color: #D8315B; /* Red color for accents/highlights */
+    --dark-color: #001B2E; /* Dark blue almost black color */
+    --light-color: #DCCDE8; /* Light lavender color */
+    --white: #fefaf5;
+    --light-gray: #ede9e0;
+    --medium-gray: #e1ded6;
+    --dark-gray: #6C757D;
+    --black: #212529;
+    --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    --card-radius: 12px;
+    --header-bg: #fefaf5; /* Explicit header bg */
+    --border-color: #0d142b; /* Explicit border color */
+    --rgb-light-gray: 237, 233, 224;
+}
 
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-/**
- * prism.js default theme for JavaScript, CSS and HTML
- * Based on dabblet (http://dabblet.com)
- * @author Lea Verou
- */
+body, html {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background-color: var(--light-gray);
+    height: 480px;
+    overflow: hidden;
+    color: var(--black);
+    transition: background-color 0.3s, color 0.3s;
+}
 
- code[class*="language-"],
- pre[class*="language-"] {
-     color: #8a8484;
-     background: none;
-     
-     font-family: Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace;
-     text-align: left;
-     white-space: pre;
-     word-spacing: normal;
-     word-break: normal;
-     word-wrap: normal;
-     font-size: 100%;
-     line-height: 1.5;
- 
-     -moz-tab-size: 4;
-     -o-tab-size: 4;
-     tab-size: 4;
- 
-     -webkit-hyphens: none;
-     -moz-hyphens: none;
-     -ms-hyphens: none;
-     hyphens: none;
- }
- 
- pre[class*="language-"]::-moz-selection,
- pre[class*="language-"] ::-moz-selection,
- code[class*="language-"]::-moz-selection,
- code[class*="language-"] ::-moz-selection {
-     text-shadow: none;
-     background: #b3d4fc;
- }
- 
- pre[class*="language-"]::selection,
- pre[class*="language-"] ::selection,
- code[class*="language-"]::selection,
- code[class*="language-"] ::selection {
-     text-shadow: none;
-     background: #b3d4fc;
- }
- 
- @media print {
-     code[class*="language-"],
-     pre[class*="language-"] {
-         text-shadow: none;
-     }
- }
- 
- 
- 
- 
- /* Code blocks */
- 
- pre[class*="language-"] {
-     padding: 1em;
-     margin: .5em 0;
-     overflow: auto;
-     max-height: 250px;
-     position: relative;
- }
- 
- :not(pre)>code[class*="language-"],
- pre[class*="language-"] {
-     background: #FFF;
-     border: 1px solid #F0F0F0;
-     border-left: 2px solid #3BAFDA;
-     border-radius: 4px;
- }
- 
- 
- 
- 
- /* Inline code */
- 
- :not(pre)>code[class*="language-"] {
-     padding: .1em;
-     border-radius: .3em;
-     white-space: normal;
- }
- 
- .token.comment,
- .token.prolog,
- .token.doctype,
- .token.cdata {
-     color: slategray;
- }
- 
- .token.punctuation {
-     color: #999;
- }
- 
- .namespace {
-     opacity: .7;
- }
- 
- .token.property,
- .token.tag,
- .token.boolean,
- .token.number,
- .token.constant,
- .token.symbol,
- .token.deleted {
-     color: #905;
- }
- 
- .token.selector,
- .token.attr-name,
- .token.string,
- .token.char,
- .token.builtin,
- .token.inserted {
-     color: #690;
- }
- 
- .token.operator,
- .token.entity,
- .token.url,
- .language-css .token.string,
- .style .token.string {
-     color: #a67f59;
-     background: hsla(0, 0%, 100%, .5);
- }
- 
- .token.atrule,
- .token.attr-value,
- .token.keyword {
-     color: #07a;
- }
- 
- .token.function {
-     color: #DD4A68;
- }
- 
- .token.regex,
- .token.important,
- .token.variable {
-     color: #e90;
- }
- 
- .token.important,
- .token.bold {
-     font-weight: bold;
- }
- 
- .token.italic {
-     font-style: italic;
- }
- 
- .token.entity {
-     cursor: help;
- }
- 
- pre[data-line] {
-     position: relative;
-     padding: 1em 0 1em 3em;
- }
- 
- pre[data-file]::before {
-     content: attr(data-file);
-     position: absolute;
-     top: 0;
-     right: 0;
- }
- 
- .line-highlight {
-     position: absolute;
-     left: 0;
-     right: 0;
-     padding: inherit 0;
-     margin-top: 1em;
-     /* Same as .prism’s padding-top */
-     background: hsla(24, 20%, 50%, .08);
-     background: -moz-linear-gradient(to right, hsla(186, 83%, 68%, 0.11) 70%, hsla(186, 33%, 82%, 0));
-     background: -webkit-linear-gradient(to right, hsla(186, 83%, 68%, 0.11) 70%, hsla(186, 33%, 82%, 0));
-     background: -o-linear-gradient(to right, hsla(186, 83%, 68%, 0.11) 70%, hsla(186, 33%, 82%, 0));
-     background: linear-gradient(to right, hsla(186, 83%, 68%, 0.11) 70%, hsla(186, 33%, 82%, 0));
- 
-     pointer-events: none;
- 
-     line-height: inherit;
-     white-space: pre;
- }
- 
- .line-highlight:before,
- .line-highlight[data-end]:after {
-     content: attr(data-start);
-     position: absolute;
-     top: .4em;
-     left: .6em;
-     min-width: 1em;
-     padding: 0 .5em;
-     color: #187798;
-     font: 75%/1.5 sans-serif;
-     text-align: center;
-     vertical-align: .3em;
-     border-radius: 999px;
-     text-shadow: none;
-     box-shadow: 0 1px white;
- }
- 
- .line-highlight[data-end]:after {
-     content: attr(data-end);
-     top: auto;
-     bottom: .4em;
- }
- 
- pre.line-numbers {
-     position: relative;
-     padding-left: 3.8em;
-     counter-reset: linenumber;
- }
- 
- pre.line-numbers>code {
-     position: relative;
- }
- 
- .line-numbers .line-numbers-rows {
-     position: absolute;
-     pointer-events: none;
-     top: 0;
-     font-size: 100%;
-     left: -3.8em;
-     width: 3em;
-     /* works for line-numbers below 1000 lines */
-     letter-spacing: -1px;
-     border-right: 1px solid #999;
- 
-     -webkit-user-select: none;
-     -moz-user-select: none;
-     -ms-user-select: none;
-     user-select: none;
- }
- 
- .line-numbers-rows>span {
-     pointer-events: none;
-     display: block;
-     counter-increment: linenumber;
- }
- 
- .line-numbers-rows>span:before {
-     content: counter(linenumber);
-     color: #999;
-     display: block;
-     padding-right: 0.8em;
-     text-align: right;
- }
- 
- .token.tab:not(:empty),
- .token.cr,
- .token.lf,
- .token.space {
-     position: relative;
- }
- 
- .token.tab:not(:empty):before,
- .token.cr:before,
- .token.lf:before,
- .token.space:before {
-     color: hsl(24, 20%, 85%);
-     position: absolute;
- }
- 
- .token.tab:not(:empty):before {
-     content: '\21E5';
- }
- 
- .token.cr:before {
-     content: '\240D';
- }
- 
- .token.crlf:before {
-     content: '\240D\240A';
- }
- 
- .token.lf:before {
-     content: '\240A';
- }
- 
- .token.space:before {
-     content: '\00B7';
- }
- 
- .token a {
-     color: inherit;
- }
- 
- div.prism-show-language {
-     position: relative;
- }
- 
- div.prism-show-language>div.prism-show-language-label {
-     color: #555;
-     background-color: #E5E5E5;
-     display: inline-block;
-     position: absolute;
-     bottom: auto;
-     left: auto;
-     top: 0;
-     right: 0;
-     width: auto;
-     height: auto;
-     font-size: 0.9em;
-     border-radius: 0 4px 0 0;
-     padding: 0 0.5em;
-     text-shadow: none;
-     z-index: 1;
-     -webkit-box-shadow: none;
-     -moz-box-shadow: none;
-     box-shadow: none;
-     -webkit-transform: none;
-     -moz-transform: none;
-     -ms-transform: none;
-     -o-transform: none;
-     transform: none;
- }
- 
- 
- 
- 
- /* Fallback, in case JS does not run, to ensure the code is at least visible */
- 
- .lang-markup script[type='text/plain'],
- .language-markup script[type='text/plain'],
- script[type='text/plain'].lang-markup,
- script[type='text/plain'].language-markup {
-     display: block;
-     font: 100% Consolas, Monaco, monospace;
-     white-space: pre;
-     overflow: auto;
- }
- 
- .command-line-prompt {
-     border-right: 1px solid #999;
-     display: block;
-     float: left;
-     font-size: 100%;
-     letter-spacing: -1px;
-     margin-right: 1em;
-     pointer-events: none;
- 
-     -webkit-user-select: none;
-     -moz-user-select: none;
-     -ms-user-select: none;
-     user-select: none;
- }
- 
- .command-line-prompt>span:before {
-     color: #999;
-     content: ' ';
-     display: block;
-     padding-right: 0.8em;
- }
- 
- .command-line-prompt>span[data-user]:before {
-     content: "[" attr(data-user) "@" attr(data-host) "] $";
- }
- 
- .command-line-prompt>span[data-user="root"]:before {
-     content: "[" attr(data-user) "@" attr(data-host) "] #";
- }
- 
- .command-line-prompt>span[data-prompt]:before {
-     content: attr(data-prompt);
- }
+.card {
+    border-radius: var(--card-radius);
+    overflow: hidden;
+    width: 360px;
+    height: 100%;
+    margin: 0 auto;
+    box-shadow: var(--shadow);
+    position: relative;
+    background-color: var(--white);
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+/* Header Styles */
+.card-header {
+    background-color: var(--header-bg); /* Use variable */
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border-color); /* Use variable */
+    transition: background-color 0.3s, border-color 0.3s;
+}
+
+.header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.logo {
+    width: 28px;
+    height: 28px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.card-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--black);
+    flex-grow: 1;
+    margin-left: 10px;
+    transition: color 0.3s;
+}
+
+.menu-button, .close-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--dark-gray);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    border-radius: 50%;
+    transition: background-color 0.2s ease, color 0.3s;
+}
+
+.menu-button:hover, .close-button:hover {
+    background-color: var(--light-gray);
+    transition: background-color 0.3s;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    position: absolute;
+    top: 0;
+    left: -300px;
+    width: 250px;
+    height: 100%;
+    background-color: var(--white);
+    z-index: 1000;
+    box-shadow: var(--shadow);
+    transition: left 0.3s ease, background-color 0.3s, box-shadow 0.3s;
+    padding: 0;
+}
+
+.sidebar.open {
+    left: 0;
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    padding: 16px;
+    border-bottom: 1px solid var(--border-color);
+    transition: border-color 0.3s;
+}
+
+.sidebar-header h4 {
+    margin-left: 10px;
+    font-size: 1.1rem;
+    flex-grow: 1;
+    color: var(--black);
+    transition: color 0.3s;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar-menu li {
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.3s;
+}
+
+.sidebar-menu li.active {
+    background-color: var(--light-gray);
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.sidebar-menu li:hover {
+    background-color: var(--light-gray);
+}
+
+.sidebar-menu li .material-icons {
+    margin-right: 10px;
+    font-size: 20px;
+}
+
+/* Main Content Area */
+.card-body {
+    background-color: var(--white);
+    height: calc(500px - 52px); /* Adjust for header */
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* Page Styles */
+.page {
+    position: relative;
+    display: none;
+    flex-direction: column;
+    padding: 10px 10px 20px 10px; /* Add more bottom padding */
+    height: 100%;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,0,0,0.1) transparent;
+    color: var(--black);
+    transition: color 0.3s;
+}
+
+.page.active {
+    display: flex;
+}
+
+.page h2 {
+    font-size: 1.25rem;
+    margin-bottom: 16px;
+    color: var(--black);
+    transition: color 0.3s;
+}
+
+/* Additional adjustment for the overview page specifically */
+#overview-page {
+    padding-bottom: 20px; /* Reduced from 60px to bring app list closer */
+}
+
+/* Overview Page Styles */
+.time-period-selector {
+    display: flex;
+    background-color: var(--light-gray);
+    border-radius: 20px;
+    padding: 4px;
+    margin-bottom: 20px;
+    transition: background-color 0.3s;
+}
+
+.period-button {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    background: none;
+    border-radius: 18px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease, color 0.3s;
+    color: var(--dark-gray);
+}
+
+.period-button.active {
+    background-color: var(--white);
+    color: var(--black);
+    font-weight: 500;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.daily-summary {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 0;
+    padding: 10px 0 20px; /* Adjusted padding for new size */
+    overflow: visible;
+}
+
+.time-circle {
+    position: relative;
+    width: 675px; /* Increased size by 50% */
+    height: 675px; /* Increased size by 50% */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto;
+}
+
+.progress-ring {
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+    position: relative;
+}
+
+.progress-ring-bg {
+    fill: none;
+    stroke: var(--light-gray);
+    stroke-width: 15; /* Increased stroke width by 50% */
+    transition: stroke 0.3s;
+}
+
+.progress-ring-circle {
+    fill: none;
+    stroke: var(--primary-color);
+    stroke-width: 18; /* Increased stroke width by 50% */
+    stroke-dasharray: 650.31; /* Updated for new circumference (2 * PI * 103.5) */
+    stroke-dashoffset: 70;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 0.5s ease;
+}
+
+.time-display {
+    position: absolute;
+    text-align: center;
+    width: 300px; /* Increased width by 50% */
+    transform: translateY(0px);
+}
+
+.time-display h2 {
+    font-size: 1.5rem; /* Reduced font size by 25% */
+    font-weight: 700;
+    margin: 0;
+    color: var(--black);
+    line-height: 1.1;
+    letter-spacing: -2px;
+    font-variant-numeric: tabular-nums;
+    font-family: 'Roboto Mono', monospace, 'Segoe UI', Arial, sans-serif;
+    transform: none;
+    white-space: nowrap;
+    transition: color 0.3s;
+}
+
+.time-display p {
+    font-size: 0.75rem; /* Reduced font size by 25% */
+    color: var(--dark-gray);
+    margin-top: 4px; /* Slightly adjusted margin */
+    margin: 0;
+    transform: none;
+    transition: color 0.3s;
+}
+
+.app-list {
+    flex: 1;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0,0,0,0.1) transparent;
+    opacity: 1; /* Start fully visible */
+    transition: opacity 0.3s ease-in-out; /* Add fade transition */
+}
+
+.app-list.loading-data {
+    opacity: 0.3; /* Fade out slightly during load */
+    pointer-events: none; /* Prevent interaction during load */
+}
+
+.app-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: var(--white);
+    border-radius: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    margin-right: 3px;
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.app-icon-container {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: var(--light-gray);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s;
+}
+
+.app-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+}
+
+.app-details {
+    flex: 1;
+    margin-left: 12px;
+}
+
+.app-name {
+    font-size: 1rem;
+    font-weight: 500;
+    margin-bottom: 4px;
+    color: var(--black);
+    transition: color 0.3s;
+}
+
+.progress-container {
+    height: 6px;
+    background-color: var(--light-gray);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+    transition: background-color 0.3s;
+}
+
+.progress-container::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(to right, 
+        rgba(255,255,255,0.1), 
+        rgba(255,255,255,0.2), 
+        rgba(255,255,255,0.1)
+    );
+    pointer-events: none;
+    z-index: 1;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: var(--secondary-color);
+    border-radius: 3px;
+    position: relative;
+}
+
+.progress-bar::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,0.4));
+    border-radius: 0 3px 3px 0;
+}
+
+.app-time {
+    font-size: 0.9rem;
+    color: var(--dark-gray);
+    margin-left: 10px;
+    white-space: nowrap;
+    transition: color 0.3s;
+}
+
+/* Settings Page Styles */
+.settings-container {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 3px !important;
+    margin-right: 2px;
+}
+
+.settings-section {
+    margin-bottom: 20px;
+}
+
+.settings-section h3 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+    color: var(--black);
+    transition: color 0.3s;
+}
+
+.app-toggles {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.app-toggle {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: var(--white);
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: background-color 0.3s;
+}
+
+.toggle-left {
+    display: flex;
+    align-items: center;
+}
+
+.toggle-app-name {
+    margin-left: 12px;
+    font-size: 0.9rem;
+    color: var(--dark-gray);
+    transition: color 0.3s;
+}
+
+/* Toggle Switch */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 40px;
+    height: 24px;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--medium-gray);
+    transition: .4s;
+    border-radius: 24px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--white);
+    transition: .4s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: var(--primary-color);
+}
+
+input:checked + .slider:before {
+    transform: translateX(16px);
+}
+
+/* Focus Mode Page Styles */
+.focus-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 0;
+}
+
+.focus-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.focus-header h3 {
+    font-size: 1.2rem;
+    color: var(--black);
+    transition: color 0.3s;
+}
+
+.primary-button {
+    background-color: var(--secondary-color);
+    color: var(--white);
+    border: none;
+    padding: 12px 24px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(95, 117, 232, 0.3);
+    transition: all 0.2s ease;
+    margin-bottom: 24px;
+}
+
+.primary-button:hover {
+    background-color: #4a63e0;
+    transform: translateY(-2px);
+}
+
+.focus-apps-section {
+    width: 100%;
+    margin-top: 20px;
+}
+
+.focus-apps-section h4 {
+    font-size: 1rem;
+    margin-bottom: 12px;
+    color: var(--black);
+    transition: color 0.3s;
+}
+
+.focus-apps {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-right: 3px !important;
+    margin-right: 2px;
+}
+
+/* Statistics Page Styles */
+.stats-container {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 3px !important;
+    margin-right: 2px;
+}
+
+.app-stat-card {
+    background-color: var(--white);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 20px 16px; /* Adjusted padding */
+    margin-bottom: 20px;
+    position: relative;
+    transition: background-color 0.3s;
+}
+
+.app-stat-title {
+    font-size: 1.3rem; /* Larger title size */
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 12px; /* Space below title */
+    color: var(--black);
+    transition: color 0.3s;
+}
+
+.app-stat-navigation {
+    display: flex;
+    justify-content: space-between; /* Space out arrows and icon */
+    align-items: center;
+    margin-bottom: 20px; /* Space below navigation */
+    padding: 0 10px; /* Add some horizontal padding */
+}
+
+.stat-icon {
+    /* Use existing app-icon-container styles, maybe slight tweaks */
+    width: 40px;   /* Slightly larger icon container */
+    height: 40px;
+    margin: 0 15px; /* Space around icon */
+}
+
+.stat-icon .app-icon {
+    width: 24px; /* Slightly larger icon */
+    height: 24px;
+}
+
+.stat-nav-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--dark-gray);
+    padding: 8px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, color 0.3s;
+}
+
+.stat-nav-button:hover {
+    background-color: var(--light-gray);
+}
+
+.stat-nav-button .material-icons {
+    font-size: 20px;
+}
+
+.app-usage-chart {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.chart-container {
+    width: 100%;
+    height: 150px;
+    margin-bottom: 12px;
+    background-color: var(--light-gray);
+    border-radius: 8px;
+    overflow: hidden;
+    transition: background-color 0.3s;
+}
+
+.time-average {
+    text-align: center;
+}
+
+.time-average h4 {
+    font-size: 1.8rem;
+    color: var(--black);
+    margin-bottom: 4px;
+    transition: color 0.3s;
+}
+
+.time-average p {
+    font-size: 0.9rem;
+    color: var(--dark-gray);
+    transition: color 0.3s;
+}
+
+.edit-limit-button {
+    width: 100%;
+    padding: 10px;
+    background-color: var(--white);
+    border: 1px solid var(--secondary-color);
+    color: var(--secondary-color);
+    border-radius: 25px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.edit-limit-button:hover {
+    background-color: var(--light-gray);
+}
+
+.close-stats {
+    background: none;
+    border: none;
+    color: var(--dark-gray);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+}
+
+/* About Page Styles */
+.about-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 20px;
+    height: 100%;
+    color: var(--black);
+    transition: color 0.3s;
+}
+
+.large-logo {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 16px;
+}
+
+.about-container h2 {
+    margin-bottom: 8px;
+}
+
+.version {
+    color: var(--dark-gray);
+    font-size: 0.8rem;
+    margin-top: 16px;
+    margin-bottom: 24px;
+    transition: color 0.3s;
+}
+
+.about-info {
+    color: var(--dark-gray);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    transition: color 0.3s;
+}
+
+.about-info a {
+    color: var(--secondary-color);
+    transition: color 0.3s;
+}
+
+/* Scrollbar Styles */
+.page::-webkit-scrollbar,
+.app-list::-webkit-scrollbar,
+.settings-container::-webkit-scrollbar,
+.stats-container::-webkit-scrollbar {
+    width: 1px;
+}
+
+.page::-webkit-scrollbar-track,
+.app-list::-webkit-scrollbar-track,
+.settings-container::-webkit-scrollbar-track,
+.stats-container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.page::-webkit-scrollbar-thumb,
+.app-list::-webkit-scrollbar-thumb,
+.settings-container::-webkit-scrollbar-thumb,
+.stats-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 4px;
+}
+
+.page:not(:hover)::-webkit-scrollbar-thumb,
+.app-list:not(:hover)::-webkit-scrollbar-thumb,
+.settings-container:not(:hover)::-webkit-scrollbar-thumb,
+.stats-container:not(:hover)::-webkit-scrollbar-thumb {
+    background: transparent;
+}
+
+/* Responsive adjustments */
+@media (max-height: 600px) {
+    .time-circle {
+        width: 120px;
+        height: 120px;
+    }
+    
+    .time-display h2 {
+        font-size: 1.8rem;
+    }
+}
+
+/* Common scrollable container styles */
+.scrollable-container {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    position: relative;
+    padding-right: 2px; /* Ensure content doesn't touch the right edge */
+    scroll-behavior: smooth; /* Add smooth scrolling */
+    -webkit-overflow-scrolling: touch; /* Smooth momentum scrolling on iOS */
+    overscroll-behavior: contain; /* Prevent scroll chaining */
+}
+
+.scrollable-container::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 1px;
+    height: 100%;
+    background-color: var(--medium-gray);
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.scrollable-container::-webkit-scrollbar {
+    width: 1px; /* Set to exactly 1px */
+    background: transparent;
+}
+
+.scrollable-container::-webkit-scrollbar-thumb {
+    background-color: var(--medium-gray);
+    opacity: 0.4;
+}
+
+/* Add smooth scrolling to the entire document */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Coming Soon Overlay */
+.coming-soon-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(var(--rgb-light-gray, 237, 233, 224), 0.85); /* Light background with opacity */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 10; /* Ensure it's above page content */
+    border-radius: inherit; /* Inherit parent page rounding if any */
+    padding: 20px;
+    box-sizing: border-box;
+    transition: background-color 0.3s;
+}
+
+body.dark-mode .coming-soon-overlay { background-color: rgba(var(--rgb-light-gray, 36, 36, 62), 0.85); }
+
+.coming-soon-overlay .material-icons {
+    font-size: 48px;
+    color: var(--dark-gray);
+    margin-bottom: 16px;
+    transition: color 0.3s;
+}
+
+.coming-soon-overlay p {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--dark-gray);
+    transition: color 0.3s;
+}
+
+/* Theme Toggle Switch Styles */
+.theme-switch {
+    position: relative;
+    display: inline-block;
+    width: 45px;
+    height: 23px;
+    margin-right: 12px; /* Space before menu button */
+}
+
+.theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.theme-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--medium-gray); /* Use var */
+    transition: .4s;
+    border-radius: 18px;
+}
+
+.theme-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 2px;
+    bottom: 3px;
+    background-color: var(--white); /* Use var */
+    transition: .4s;
+    border-radius: 50%;
+    z-index: 2; /* Above icons */
+}
+
+input:checked + .theme-slider {
+    background-color: var(--secondary-color); /* Use var */
+}
+
+input:checked + .theme-slider:before {
+    transform: translateX(24px);
+}
+
+/* Icon positioning */
+.theme-slider .material-icons {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: var(--white);
+    z-index: 1; /* Below knob */
+    transition: opacity 0.3s ease;
+}
+
+.theme-slider .sun-icon {
+    left: 5px;
+    opacity: 9; /* Visible by default */
+}
+
+.theme-slider .moon-icon {
+    right: 5px;
+    opacity: 9; /* Hidden by default */
+    color: var(--dark-gray);
+
+}
+
+input:checked + .theme-slider .sun-icon {
+    opacity: 9; /* Hide sun in dark mode */
+}
+
+input:checked + .theme-slider .moon-icon {
+    opacity: 9; /* Show moon in dark mode */
+}
+
+/* --- Dark Mode Variables --- */
+body.dark-mode {
+    --primary-color: #34E0A1; /* Adjust primary if needed */
+    --secondary-color: #7A8EEC; /* Adjust secondary if needed */
+    --white: #1A1A2E; /* Dark background */
+    --light-gray: #24243E; /* Slightly lighter dark bg */
+    --medium-gray: #3E3E5A; /* Darker border/element bg */
+    --dark-gray: #AEAEAE; /* Lighter text for dark bg */
+    --black: #F0F0F0; /* Light text */
+    --header-bg: #1A1A2E; /* Explicit header bg */
+    --border-color: #3E3E5A; /* Explicit border color */
+    --shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    --rgb-light-gray: 36, 36, 62;
+}
+
+/* Apply variables to relevant elements */
+body {
+    background-color: var(--light-gray);
+    color: var(--black);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.card {
+    background-color: var(--white);
+    box-shadow: var(--shadow);
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.card-title { color: var(--black); transition: color 0.3s; }
+.menu-button, .close-button { color: var(--dark-gray); transition: color 0.3s; }
+.menu-button:hover, .close-button:hover {
+    background-color: var(--light-gray); /* Use theme variable */
+    transition: background-color 0.3s;
+}
+
+.sidebar {
+    background-color: var(--white);
+    box-shadow: var(--shadow);
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+.sidebar-header { border-bottom-color: var(--border-color); transition: border-color 0.3s;}
+.sidebar-header h4 { color: var(--black); transition: color 0.3s; }
+.sidebar-menu li { color: var(--dark-gray); transition: background-color 0.2s, color 0.3s; }
+.sidebar-menu li.active {
+    background-color: var(--light-gray); 
+    color: var(--primary-color); 
+}
+.sidebar-menu li:hover { background-color: var(--light-gray); }
+
+.page { color: var(--black); transition: color 0.3s; }
+.page h2 { color: var(--black); transition: color 0.3s; }
+
+.time-period-selector { background-color: var(--light-gray); transition: background-color 0.3s; }
+.period-button { color: var(--dark-gray); transition: all 0.2s, color 0.3s; }
+.period-button.active {
+    background-color: var(--white);
+    color: var(--black);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Adjust shadow for dark maybe */
+}
+
+.progress-ring-bg { stroke: var(--light-gray); transition: stroke 0.3s; }
+.time-display h2 { color: var(--black); transition: color 0.3s; }
+.time-display p { color: var(--dark-gray); transition: color 0.3s; }
+
+.app-item {
+    background-color: var(--white);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Adjust shadow maybe */
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+.app-icon-container { background-color: var(--light-gray); transition: background-color 0.3s; }
+.app-name { color: var(--black); transition: color 0.3s; }
+.progress-container { background-color: var(--light-gray); transition: background-color 0.3s; }
+.app-time { color: var(--dark-gray); transition: color 0.3s; }
+
+/* Update other elements as needed (Settings, Stats, About, Focus) */
+.settings-section h3 { color: var(--black); transition: color 0.3s;}
+.app-toggle { background-color: var(--white); transition: background-color 0.3s; }
+.toggle-app-name { color: var(--dark-gray); transition: color 0.3s; }
+.slider { background-color: var(--medium-gray); transition: background-color 0.4s;}
+.slider:before { background-color: var(--white); transition: background-color 0.4s; }
+
+.focus-header h3 { color: var(--black); transition: color 0.3s; }
+.focus-apps-section h4 { color: var(--black); transition: color 0.3s; }
+
+.app-stat-card { background-color: var(--white); transition: background-color 0.3s; }
+.app-stat-title { color: var(--black); transition: color 0.3s; }
+.stat-nav-button { color: var(--dark-gray); transition: color 0.3s; }
+.chart-container { background-color: var(--light-gray); transition: background-color 0.3s; }
+.time-average h4 { color: var(--black); transition: color 0.3s; }
+.time-average p { color: var(--dark-gray); transition: color 0.3s; }
+
+.about-container { color: var(--black); transition: color 0.3s; }
+.version { color: var(--dark-gray); transition: color 0.3s; }
+.about-info { color: var(--dark-gray); transition: color 0.3s; }
+.about-info a { color: var(--secondary-color); transition: color 0.3s; }
+
+.coming-soon-overlay { background-color: rgba(var(--rgb-light-gray, 237, 233, 224), 0.85); transition: background-color 0.3s; }
+body.dark-mode .coming-soon-overlay { background-color: rgba(var(--rgb-light-gray, 36, 36, 62), 0.85); }
+.coming-soon-overlay .material-icons { color: var(--dark-gray); transition: color 0.3s; }
+.coming-soon-overlay p { color: var(--dark-gray); transition: color 0.3s; }
+
+/* Add RGB versions for rgba() compatibility if needed, or adjust rgba */
+:root {
+    /* ... existing vars ... */
+    --rgb-light-gray: 237, 233, 224;
+}
+body.dark-mode {
+    /* ... existing dark vars ... */
+    --rgb-light-gray: 36, 36, 62;
+}
