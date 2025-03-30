@@ -553,96 +553,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function renderStatisticsPage() {
-        const appDetailsContainer = document.getElementById('app-details-container');
-        appDetailsContainer.innerHTML = ''; // Clear previous stats
-
-        // Get the list of currently tracked app IDs
-        trackedAppIds = Object.keys(selectedApps).filter(id => selectedApps[id]);
-
-        if (trackedAppIds.length > 0) {
-            currentStatIndex = 0; // Start with the first app
-            displayAppStats(trackedAppIds[currentStatIndex]);
-        } else {
-            // Display a message if no apps are tracked
-            appDetailsContainer.innerHTML = `
-                <div style="text-align: center; color: var(--dark-gray); padding: 40px 20px;">
-                    <p>No apps are currently being tracked.</p>
-                    <p>Go to Settings to select apps you want to monitor.</p>
-                </div>
-            `;
-        }
-    }
-
-    function displayAppStats(appId) {
-        const appDetailsContainer = document.getElementById('app-details-container');
-        appDetailsContainer.innerHTML = ''; // Clear previous stats
-
-        if (!appId) return;
-
-        const template = document.getElementById('app-stats-template');
-        const statsElement = template.content.cloneNode(true);
-
-        // Populate card with app info using new structure
-        statsElement.querySelector('.app-stat-title').textContent = appData[appId].name;
-        const iconContainer = statsElement.querySelector('.stat-icon');
-        iconContainer.querySelector('.app-icon').src = appData[appId].icon;
-        iconContainer.querySelector('.app-icon').alt = appId;
-
-        // Mock data for Daily Average (using day-scoped random time)
-        const randomMinutes = getRandomTimeInMinutes('day'); 
-        statsElement.querySelector('.daily-avg').textContent = `${randomMinutes} min`;
-
-        // Add chart (using updated simple chart)
-        const chartContainer = statsElement.querySelector('.chart-container');
-        chartContainer.innerHTML = createSimpleChart(); 
-
-        // --- Navigation Logic (remains the same) ---
-        const prevButton = statsElement.querySelector('.prev-stat-button');
-        const nextButton = statsElement.querySelector('.next-stat-button');
-
-        if (trackedAppIds.length <= 1) {
-            prevButton.style.display = 'none';
-            nextButton.style.display = 'none';
-        }
-
-        prevButton.addEventListener('click', () => {
-            currentStatIndex = (currentStatIndex - 1 + trackedAppIds.length) % trackedAppIds.length;
-            displayAppStats(trackedAppIds[currentStatIndex]);
-        });
-
-        nextButton.addEventListener('click', () => {
-            currentStatIndex = (currentStatIndex + 1) % trackedAppIds.length;
-            displayAppStats(trackedAppIds[currentStatIndex]);
-        });
-        // --- End Navigation Logic ---
-
-        appDetailsContainer.appendChild(statsElement);
-    }
-
-    function createSimpleChart() {
-        // Create a simple bar chart closer to the reference
-        const values = [20, 35, 60, 45, 80, 55, 40]; // Example values (0-100 scale)
-        // Match labels from reference, using empty strings for bars without labels
-        const labels = ['4AM', '9AM', '12PM', '3PM', '7PM', '9PM', '11:30PM']; 
-        
-        // Use space-between for alignment and remove fixed flex-basis
-        let chartHtml = '<div style="display: flex; justify-content: space-between; align-items: flex-end; height: 100%; padding: 10px 5px 0; box-sizing: border-box;">';
-        
-        values.forEach((value, index) => {
-            const height = Math.max(5, value); // Ensure a minimum height for visibility
-            const label = labels[index] || ''; // Get label or empty string
-            
-            // Removed fixed flex-basis from inner div
-            chartHtml += `
-                <div style="display: flex; flex-direction: column; align-items: center; height: 100%; justify-content: flex-end;">
-                    <div style="background-color: ${value === 80 ? 'var(--secondary-color)' : '#C9D1F9'}; height: ${height}%; width: 12px; border-radius: 4px; margin-bottom: 4px;"></div>
-                    <div style="font-size: 9px; color: var(--dark-gray); white-space: nowrap; height: 12px;">${label}</div>
-                </div>
-            `;
-        });
-        
-        chartHtml += '</div>';
-        return chartHtml;
+        // No dynamic content needed for stats page currently
+        // The overlay covers the static placeholder HTML
+        console.log("Showing static Statistics page (feature coming soon).");
     }
 
     // --- Theme Switcher Logic --- 

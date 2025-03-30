@@ -118,15 +118,49 @@
             <div id="stats-page" class="page scrollable-container">
                 <!-- Coming Soon Overlay -->
                 <div class="coming-soon-overlay">
-                    <span class="material-icons">construction</span>
+                    <span class="material-icons">analytics</span>
                     <p>Detailed Statistics<br>Coming Soon!</p>
                 </div>
-                <!-- Original Content (remains hidden under overlay) -->
+                <!-- Original Content (Static Placeholder) -->
                 <h2>Usage Statistics</h2>
                 <div class="stats-container scrollable-container">
-                    <div id="app-details-container" class="app-details scrollable-container">
-                        <!-- Individual app stats will go here -->
+                    <!-- Static placeholder card structure -->
+                    <div class="app-stat-card">
+                        <h3 class="app-name app-stat-title">Slack</h3> 
+                        <div class="app-stat-navigation">
+                            <button class="stat-nav-button prev-stat-button" disabled>
+                                <span class="material-icons">arrow_back_ios</span>
+                            </button>
+                            <div class="app-icon-container stat-icon">
+                                <!-- Placeholder Icon or leave empty -->
+                                <img src="/assets/images/icons/slack.png" alt="Netflix Logo" class="app-icon">
+                                <!-- <span class="material-icons" style="color: var(--medium-gray);"></span> -->
+                            </div>
+                            <button class="stat-nav-button next-stat-button" disabled>
+                                <span class="material-icons">arrow_forward_ios</span>
+                            </button>
+                        </div>
+                        <div class="app-usage-chart">
+                            <div class="chart-container"> 
+                                <!-- Basic placeholder bars (can be refined with CSS if needed) -->
+                                <div style="display: flex; justify-content: space-between; align-items: flex-end; height: 100%; padding: 10px 5px 0; box-sizing: border-box;">
+                                    <div style="height: 20%; background-color: #C9D1F9; width: 12px; border-radius: 4px;"></div>
+                                    <div style="height: 35%; background-color: #C9D1F9; width: 12px; border-radius: 4px;"></div>
+                                    <div style="height: 60%; background-color: #C9D1F9; width: 12px; border-radius: 4px;"></div>
+                                    <div style="height: 45%; background-color: #C9D1F9; width: 12px; border-radius: 4px;"></div>
+                                    <div style="height: 80%; background-color: var(--secondary-color); width: 12px; border-radius: 4px;"></div>
+                                    <div style="height: 55%; background-color: #C9D1F9; width: 12px; border-radius: 4px;"></div>
+                                    <div style="height: 40%; background-color: #C9D1F9; width: 12px; border-radius: 4px;"></div>
+                                </div>
+                            </div>
+                            <div class="time-average">
+                                <h4 class="daily-avg">55 min</h4>
+                                <p>Daily Average</p>
+                            </div>
+                        </div>
                     </div>
+                    <!-- Remove dynamic container if no longer needed -->
+                    <!-- <div id="app-details-container" class="app-details scrollable-container"></div> -->
                 </div>
             </div>
 
