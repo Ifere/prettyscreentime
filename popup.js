@@ -88,6 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Set up event listeners for menu and navigation
     initEventListeners();
+    initThemeSwitcher();
     
     function showWelcomeScreen() {
         const cardElement = document.querySelector('.card');
@@ -643,4 +644,33 @@ document.addEventListener('DOMContentLoaded', function() {
         chartHtml += '</div>';
         return chartHtml;
     }
+
+    // --- Theme Switcher Logic --- 
+    function initThemeSwitcher() {
+        const themeSwitch = document.getElementById('theme-switch-checkbox');
+        const body = document.body;
+
+        // 1. Check local storage for saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            body.classList.add('dark-mode');
+            themeSwitch.checked = true;
+        } else {
+            // Default to light mode (remove class just in case)
+            body.classList.remove('dark-mode');
+            themeSwitch.checked = false;
+        }
+
+        // 2. Add event listener for changes
+        themeSwitch.addEventListener('change', function() {
+            if (this.checked) {
+                body.classList.add('dark-mode');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.classList.remove('dark-mode');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+    }
+    // --- End Theme Switcher Logic ---
 });

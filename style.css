@@ -15,6 +15,9 @@
     --black: #212529;
     --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     --card-radius: 12px;
+    --header-bg: #fefaf5; /* Explicit header bg */
+    --border-color: #0d142b; /* Explicit border color */
+    --rgb-light-gray: 237, 233, 224;
 }
 
 * {
@@ -28,9 +31,10 @@ body, html {
     padding: 0;
     font-family: 'Segoe UI', Arial, sans-serif;
     background-color: var(--light-gray);
-    height: 500px;
+    height: 480px;
     overflow: hidden;
     color: var(--black);
+    transition: background-color 0.3s, color 0.3s;
 }
 
 .card {
@@ -42,13 +46,15 @@ body, html {
     box-shadow: var(--shadow);
     position: relative;
     background-color: var(--white);
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 /* Header Styles */
 .card-header {
-    background-color: var(--white);
+    background-color: var(--header-bg); /* Use variable */
     padding: 12px 16px;
-    border-bottom: 1px solid var(--medium-gray);
+    border-bottom: 1px solid var(--border-color); /* Use variable */
+    transition: background-color 0.3s, border-color 0.3s;
 }
 
 .header-content {
@@ -71,6 +77,7 @@ body, html {
     color: var(--black);
     flex-grow: 1;
     margin-left: 10px;
+    transition: color 0.3s;
 }
 
 .menu-button, .close-button {
@@ -83,11 +90,12 @@ body, html {
     justify-content: center;
     padding: 4px;
     border-radius: 50%;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, color 0.3s;
 }
 
 .menu-button:hover, .close-button:hover {
     background-color: var(--light-gray);
+    transition: background-color 0.3s;
 }
 
 /* Sidebar Styles */
@@ -100,7 +108,7 @@ body, html {
     background-color: var(--white);
     z-index: 1000;
     box-shadow: var(--shadow);
-    transition: left 0.3s ease;
+    transition: left 0.3s ease, background-color 0.3s, box-shadow 0.3s;
     padding: 0;
 }
 
@@ -112,13 +120,16 @@ body, html {
     display: flex;
     align-items: center;
     padding: 16px;
-    border-bottom: 1px solid var(--medium-gray);
+    border-bottom: 1px solid var(--border-color);
+    transition: border-color 0.3s;
 }
 
 .sidebar-header h4 {
     margin-left: 10px;
     font-size: 1.1rem;
     flex-grow: 1;
+    color: var(--black);
+    transition: color 0.3s;
 }
 
 .sidebar-menu {
@@ -132,7 +143,7 @@ body, html {
     display: flex;
     align-items: center;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, color 0.3s;
 }
 
 .sidebar-menu li.active {
@@ -170,6 +181,8 @@ body, html {
     overflow-y: auto;
     scrollbar-width: thin;
     scrollbar-color: rgba(0,0,0,0.1) transparent;
+    color: var(--black);
+    transition: color 0.3s;
 }
 
 .page.active {
@@ -180,6 +193,7 @@ body, html {
     font-size: 1.25rem;
     margin-bottom: 16px;
     color: var(--black);
+    transition: color 0.3s;
 }
 
 /* Additional adjustment for the overview page specifically */
@@ -194,6 +208,7 @@ body, html {
     border-radius: 20px;
     padding: 4px;
     margin-bottom: 20px;
+    transition: background-color 0.3s;
 }
 
 .period-button {
@@ -204,7 +219,8 @@ body, html {
     border-radius: 18px;
     font-size: 0.9rem;
     cursor: pointer;
-    transition: all 0.2s ease;
+    transition: all 0.2s ease, color 0.3s;
+    color: var(--dark-gray);
 }
 
 .period-button.active {
@@ -244,6 +260,7 @@ body, html {
     fill: none;
     stroke: var(--light-gray);
     stroke-width: 15; /* Increased stroke width by 50% */
+    transition: stroke 0.3s;
 }
 
 .progress-ring-circle {
@@ -274,6 +291,7 @@ body, html {
     font-family: 'Roboto Mono', monospace, 'Segoe UI', Arial, sans-serif;
     transform: none;
     white-space: nowrap;
+    transition: color 0.3s;
 }
 
 .time-display p {
@@ -282,6 +300,7 @@ body, html {
     margin-top: 4px; /* Slightly adjusted margin */
     margin: 0;
     transform: none;
+    transition: color 0.3s;
 }
 
 .app-list {
@@ -307,6 +326,7 @@ body, html {
     margin-bottom: 10px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     margin-right: 3px;
+    transition: background-color 0.3s, box-shadow 0.3s;
 }
 
 .app-icon-container {
@@ -318,6 +338,7 @@ body, html {
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: background-color 0.3s;
 }
 
 .app-icon {
@@ -335,6 +356,8 @@ body, html {
     font-size: 1rem;
     font-weight: 500;
     margin-bottom: 4px;
+    color: var(--black);
+    transition: color 0.3s;
 }
 
 .progress-container {
@@ -343,6 +366,7 @@ body, html {
     border-radius: 3px;
     overflow: hidden;
     position: relative;
+    transition: background-color 0.3s;
 }
 
 .progress-container::before {
@@ -384,6 +408,7 @@ body, html {
     color: var(--dark-gray);
     margin-left: 10px;
     white-space: nowrap;
+    transition: color 0.3s;
 }
 
 /* Settings Page Styles */
@@ -402,6 +427,7 @@ body, html {
     font-size: 1rem;
     margin-bottom: 12px;
     color: var(--black);
+    transition: color 0.3s;
 }
 
 .app-toggles {
@@ -418,6 +444,7 @@ body, html {
     background-color: var(--white);
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    transition: background-color 0.3s;
 }
 
 .toggle-left {
@@ -428,6 +455,8 @@ body, html {
 .toggle-app-name {
     margin-left: 12px;
     font-size: 0.9rem;
+    color: var(--dark-gray);
+    transition: color 0.3s;
 }
 
 /* Toggle Switch */
@@ -492,6 +521,7 @@ input:checked + .slider:before {
 .focus-header h3 {
     font-size: 1.2rem;
     color: var(--black);
+    transition: color 0.3s;
 }
 
 .primary-button {
@@ -522,6 +552,7 @@ input:checked + .slider:before {
     font-size: 1rem;
     margin-bottom: 12px;
     color: var(--black);
+    transition: color 0.3s;
 }
 
 .focus-apps {
@@ -547,6 +578,7 @@ input:checked + .slider:before {
     padding: 20px 16px; /* Adjusted padding */
     margin-bottom: 20px;
     position: relative;
+    transition: background-color 0.3s;
 }
 
 .app-stat-title {
@@ -555,6 +587,7 @@ input:checked + .slider:before {
     text-align: center;
     margin-bottom: 12px; /* Space below title */
     color: var(--black);
+    transition: color 0.3s;
 }
 
 .app-stat-navigation {
@@ -587,7 +620,7 @@ input:checked + .slider:before {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.2s ease;
+    transition: background-color 0.2s ease, color 0.3s;
 }
 
 .stat-nav-button:hover {
@@ -612,6 +645,7 @@ input:checked + .slider:before {
     background-color: var(--light-gray);
     border-radius: 8px;
     overflow: hidden;
+    transition: background-color 0.3s;
 }
 
 .time-average {
@@ -622,11 +656,13 @@ input:checked + .slider:before {
     font-size: 1.8rem;
     color: var(--black);
     margin-bottom: 4px;
+    transition: color 0.3s;
 }
 
 .time-average p {
     font-size: 0.9rem;
     color: var(--dark-gray);
+    transition: color 0.3s;
 }
 
 .edit-limit-button {
@@ -666,6 +702,8 @@ input:checked + .slider:before {
     text-align: center;
     padding: 20px;
     height: 100%;
+    color: var(--black);
+    transition: color 0.3s;
 }
 
 .large-logo {
@@ -683,12 +721,19 @@ input:checked + .slider:before {
     font-size: 0.8rem;
     margin-top: 16px;
     margin-bottom: 24px;
+    transition: color 0.3s;
 }
 
 .about-info {
     color: var(--dark-gray);
     font-size: 0.9rem;
     line-height: 1.5;
+    transition: color 0.3s;
+}
+
+.about-info a {
+    color: var(--secondary-color);
+    transition: color 0.3s;
 }
 
 /* Scrollbar Styles */
@@ -780,7 +825,7 @@ html {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(240, 240, 240, 0.85); /* Light background with opacity */
+    background-color: rgba(var(--rgb-light-gray, 237, 233, 224), 0.85); /* Light background with opacity */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -790,16 +835,211 @@ html {
     border-radius: inherit; /* Inherit parent page rounding if any */
     padding: 20px;
     box-sizing: border-box;
+    transition: background-color 0.3s;
 }
+
+body.dark-mode .coming-soon-overlay { background-color: rgba(var(--rgb-light-gray, 36, 36, 62), 0.85); }
 
 .coming-soon-overlay .material-icons {
     font-size: 48px;
     color: var(--dark-gray);
     margin-bottom: 16px;
+    transition: color 0.3s;
 }
 
 .coming-soon-overlay p {
     font-size: 1.1rem;
     font-weight: 500;
     color: var(--dark-gray);
+    transition: color 0.3s;
+}
+
+/* Theme Toggle Switch Styles */
+.theme-switch {
+    position: relative;
+    display: inline-block;
+    width: 45px;
+    height: 23px;
+    margin-right: 12px; /* Space before menu button */
+}
+
+.theme-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.theme-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--medium-gray); /* Use var */
+    transition: .4s;
+    border-radius: 18px;
+}
+
+.theme-slider:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 2px;
+    bottom: 3px;
+    background-color: var(--white); /* Use var */
+    transition: .4s;
+    border-radius: 50%;
+    z-index: 2; /* Above icons */
+}
+
+input:checked + .theme-slider {
+    background-color: var(--secondary-color); /* Use var */
+}
+
+input:checked + .theme-slider:before {
+    transform: translateX(24px);
+}
+
+/* Icon positioning */
+.theme-slider .material-icons {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: var(--white);
+    z-index: 1; /* Below knob */
+    transition: opacity 0.3s ease;
+}
+
+.theme-slider .sun-icon {
+    left: 5px;
+    opacity: 9; /* Visible by default */
+}
+
+.theme-slider .moon-icon {
+    right: 5px;
+    opacity: 9; /* Hidden by default */
+    color: var(--dark-gray);
+
+}
+
+input:checked + .theme-slider .sun-icon {
+    opacity: 9; /* Hide sun in dark mode */
+}
+
+input:checked + .theme-slider .moon-icon {
+    opacity: 9; /* Show moon in dark mode */
+}
+
+/* --- Dark Mode Variables --- */
+body.dark-mode {
+    --primary-color: #34E0A1; /* Adjust primary if needed */
+    --secondary-color: #7A8EEC; /* Adjust secondary if needed */
+    --white: #1A1A2E; /* Dark background */
+    --light-gray: #24243E; /* Slightly lighter dark bg */
+    --medium-gray: #3E3E5A; /* Darker border/element bg */
+    --dark-gray: #AEAEAE; /* Lighter text for dark bg */
+    --black: #F0F0F0; /* Light text */
+    --header-bg: #1A1A2E; /* Explicit header bg */
+    --border-color: #3E3E5A; /* Explicit border color */
+    --shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    --rgb-light-gray: 36, 36, 62;
+}
+
+/* Apply variables to relevant elements */
+body {
+    background-color: var(--light-gray);
+    color: var(--black);
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.card {
+    background-color: var(--white);
+    box-shadow: var(--shadow);
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.card-title { color: var(--black); transition: color 0.3s; }
+.menu-button, .close-button { color: var(--dark-gray); transition: color 0.3s; }
+.menu-button:hover, .close-button:hover {
+    background-color: var(--light-gray); /* Use theme variable */
+    transition: background-color 0.3s;
+}
+
+.sidebar {
+    background-color: var(--white);
+    box-shadow: var(--shadow);
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+.sidebar-header { border-bottom-color: var(--border-color); transition: border-color 0.3s;}
+.sidebar-header h4 { color: var(--black); transition: color 0.3s; }
+.sidebar-menu li { color: var(--dark-gray); transition: background-color 0.2s, color 0.3s; }
+.sidebar-menu li.active {
+    background-color: var(--light-gray); 
+    color: var(--primary-color); 
+}
+.sidebar-menu li:hover { background-color: var(--light-gray); }
+
+.page { color: var(--black); transition: color 0.3s; }
+.page h2 { color: var(--black); transition: color 0.3s; }
+
+.time-period-selector { background-color: var(--light-gray); transition: background-color 0.3s; }
+.period-button { color: var(--dark-gray); transition: all 0.2s, color 0.3s; }
+.period-button.active {
+    background-color: var(--white);
+    color: var(--black);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Adjust shadow for dark maybe */
+}
+
+.progress-ring-bg { stroke: var(--light-gray); transition: stroke 0.3s; }
+.time-display h2 { color: var(--black); transition: color 0.3s; }
+.time-display p { color: var(--dark-gray); transition: color 0.3s; }
+
+.app-item {
+    background-color: var(--white);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Adjust shadow maybe */
+    transition: background-color 0.3s, box-shadow 0.3s;
+}
+.app-icon-container { background-color: var(--light-gray); transition: background-color 0.3s; }
+.app-name { color: var(--black); transition: color 0.3s; }
+.progress-container { background-color: var(--light-gray); transition: background-color 0.3s; }
+.app-time { color: var(--dark-gray); transition: color 0.3s; }
+
+/* Update other elements as needed (Settings, Stats, About, Focus) */
+.settings-section h3 { color: var(--black); transition: color 0.3s;}
+.app-toggle { background-color: var(--white); transition: background-color 0.3s; }
+.toggle-app-name { color: var(--dark-gray); transition: color 0.3s; }
+.slider { background-color: var(--medium-gray); transition: background-color 0.4s;}
+.slider:before { background-color: var(--white); transition: background-color 0.4s; }
+
+.focus-header h3 { color: var(--black); transition: color 0.3s; }
+.focus-apps-section h4 { color: var(--black); transition: color 0.3s; }
+
+.app-stat-card { background-color: var(--white); transition: background-color 0.3s; }
+.app-stat-title { color: var(--black); transition: color 0.3s; }
+.stat-nav-button { color: var(--dark-gray); transition: color 0.3s; }
+.chart-container { background-color: var(--light-gray); transition: background-color 0.3s; }
+.time-average h4 { color: var(--black); transition: color 0.3s; }
+.time-average p { color: var(--dark-gray); transition: color 0.3s; }
+
+.about-container { color: var(--black); transition: color 0.3s; }
+.version { color: var(--dark-gray); transition: color 0.3s; }
+.about-info { color: var(--dark-gray); transition: color 0.3s; }
+.about-info a { color: var(--secondary-color); transition: color 0.3s; }
+
+.coming-soon-overlay { background-color: rgba(var(--rgb-light-gray, 237, 233, 224), 0.85); transition: background-color 0.3s; }
+body.dark-mode .coming-soon-overlay { background-color: rgba(var(--rgb-light-gray, 36, 36, 62), 0.85); }
+.coming-soon-overlay .material-icons { color: var(--dark-gray); transition: color 0.3s; }
+.coming-soon-overlay p { color: var(--dark-gray); transition: color 0.3s; }
+
+/* Add RGB versions for rgba() compatibility if needed, or adjust rgba */
+:root {
+    /* ... existing vars ... */
+    --rgb-light-gray: 237, 233, 224;
+}
+body.dark-mode {
+    /* ... existing dark vars ... */
+    --rgb-light-gray: 36, 36, 62;
 }
